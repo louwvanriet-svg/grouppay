@@ -1,0 +1,1038 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GroupPay — Demo</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  /* ── PAY@ BRAND KIT TOKENS ─────────────────────────────────────── */
+  :root {
+    --orange-800: #FF5417; /* Primary — CTAs, logo */
+    --orange-600: #FF7442;
+    --orange-400: #FF9C66;
+    --orange-200: #FFF6F2;
+    --navy:       #001752; /* Heading, body */
+    --blue-600:   #0F328C;
+    --blue-400:   #2A54C0;
+    --blue-200:   #98CFFF;
+    --grey-600:   #676C7D;
+    --grey-400:   #E1E2E5;
+    --grey-200:   #F3F5F9;
+    --white:      #FFFFFF;
+    /* GroupPay extras */
+    --teal:       #0D9488;
+    --gold:       #F59E0B;
+    --green:      #16A34A;
+    --red:        #DC2626;
+    --bg-dark:    #0D1117;
+    --surface:    #111827;
+    --surface-2:  #1A2740;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+
+  body {
+    font-family:'Poppins',sans-serif;
+    background:var(--bg-dark);
+    display:flex; justify-content:center; align-items:center;
+    min-height:100vh; padding:20px;
+  }
+
+  /* ── SCENE ── */
+  .scene { display:flex; gap:40px; align-items:flex-start; max-width:1160px; width:100%; }
+
+  /* ── BRAND PANEL ── */
+  .brand-panel { flex:1; color:white; padding:20px 0; display:flex; flex-direction:column; gap:24px; }
+
+  .brand-logo { display:flex; align-items:center; gap:12px; }
+  .brand-dot {
+    width:48px; height:48px; background:var(--orange-800); border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+    font-family:'Poppins',sans-serif; font-weight:800; font-size:11px; color:white; letter-spacing:-0.5px;
+  }
+  .brand-wordmark { font-family:'Poppins',sans-serif; font-size:24px; font-weight:700; color:white; }
+  .brand-wordmark .at { color:var(--orange-800); }
+  .brand-sub { font-size:10px; font-weight:500; letter-spacing:2px; text-transform:uppercase; color:var(--grey-600); margin-top:1px; }
+
+  .brand-hero h1 { font-family:'Poppins',sans-serif; font-size:34px; font-weight:700; line-height:1.15; color:white; }
+  .brand-hero h1 em { color:var(--orange-800); font-style:normal; }
+  .brand-hero p { margin-top:10px; font-size:13px; color:var(--grey-600); line-height:1.6; max-width:300px; font-weight:400; }
+
+  /* ── MOMENTS ── */
+  .panel-section-title { font-size:10px; font-weight:600; letter-spacing:2px; text-transform:uppercase; color:var(--grey-600); margin-bottom:10px; }
+  .moment-card { background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.07); border-radius:10px; padding:12px 14px; margin-bottom:7px; cursor:pointer; transition:all 0.2s; }
+  .moment-card:hover, .moment-card.active { background:rgba(255,84,23,0.08); border-color:rgba(255,84,23,0.35); }
+  .moment-card .m-num { font-size:9px; font-weight:700; color:var(--orange-800); letter-spacing:1.5px; margin-bottom:3px; }
+  .moment-card .m-title { font-size:12px; font-weight:600; color:white; margin-bottom:2px; }
+  .moment-card .m-desc { font-size:10px; color:var(--grey-600); line-height:1.45; font-weight:400; }
+
+  /* ── PARTNERS GRID ── */
+  .partners-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:5px; }
+  .partner-chip { background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.06); border-radius:7px; padding:7px 6px; display:flex; align-items:center; gap:6px; font-size:9px; font-weight:500; color:rgba(255,255,255,0.6); transition:all 0.2s; }
+  .partner-chip:hover { background:rgba(255,255,255,0.07); border-color:rgba(255,84,23,0.3); color:white; }
+  .p-icon { width:20px; height:20px; border-radius:4px; display:flex; align-items:center; justify-content:center; font-size:9px; font-weight:800; flex-shrink:0; }
+
+  /* ── PHONE ── */
+  .phone-wrap { position:relative; flex-shrink:0; }
+  .phone {
+    width:375px; height:812px;
+    background:var(--surface);
+    border-radius:46px; border:8px solid #2D3748;
+    overflow:hidden; position:relative;
+    box-shadow: 0 0 0 1px rgba(255,255,255,0.05), 0 40px 80px rgba(0,0,0,0.7), 0 0 80px rgba(255,84,23,0.1);
+  }
+  .phone::before { content:''; position:absolute; top:0; left:50%; transform:translateX(-50%); width:120px; height:32px; background:#2D3748; border-radius:0 0 22px 22px; z-index:100; }
+
+  .screen { position:absolute; inset:0; overflow:hidden; opacity:0; pointer-events:none; transition:opacity 0.3s ease; }
+  .screen.active { opacity:1; pointer-events:all; }
+
+  /* ── STATUS BAR ── */
+  .status-bar { height:46px; display:flex; align-items:flex-end; justify-content:space-between; padding:0 26px 8px; position:relative; z-index:10; }
+  .st-time { font-size:13px; font-weight:600; color:white; }
+  .st-icons { display:flex; gap:5px; align-items:center; color:white; font-size:11px; }
+
+  /* ── APP HEADER ── */
+  .app-header { padding:6px 20px 12px; display:flex; align-items:center; justify-content:space-between; }
+  .app-logo { display:flex; align-items:center; gap:8px; }
+  .app-logo .dot { width:28px; height:28px; background:var(--orange-800); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:8px; font-weight:800; color:white; }
+  .app-logo .wm { font-family:'Poppins',sans-serif; font-size:15px; font-weight:700; color:white; }
+  .app-logo .wm span { color:var(--orange-800); }
+  .av { width:32px; height:32px; border-radius:50%; background:linear-gradient(135deg,var(--orange-800),var(--orange-400)); display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:700; color:white; border:2px solid rgba(255,255,255,0.15); }
+  .badge { position:absolute; top:-3px; right:-3px; width:15px; height:15px; background:var(--red); border-radius:50%; font-size:8px; font-weight:700; color:white; display:flex; align-items:center; justify-content:center; border:2px solid var(--surface); }
+
+  /* ── BACK HEADER ── */
+  .back-header { display:flex; align-items:center; gap:12px; padding:6px 20px 12px; }
+  .back-btn { width:34px; height:34px; background:rgba(255,255,255,0.06); border-radius:9px; display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:15px; color:white; transition:background 0.2s; flex-shrink:0; }
+  .back-btn:hover { background:rgba(255,255,255,0.1); }
+  .bh-title { font-family:'Poppins',sans-serif; font-size:15px; font-weight:600; color:white; }
+  .bh-sub { font-size:10px; color:var(--grey-600); font-weight:400; }
+
+  /* ── BOTTOM NAV ── */
+  .bottom-nav { position:absolute; bottom:0; left:0; right:0; background:rgba(13,23,42,0.97); backdrop-filter:blur(20px); border-top:1px solid rgba(255,255,255,0.06); display:flex; padding:10px 0 26px; }
+  .nav-item { flex:1; display:flex; flex-direction:column; align-items:center; gap:3px; cursor:pointer; padding:5px 0; }
+  .ni { font-size:19px; color:var(--grey-600); transition:color 0.2s; }
+  .nl { font-size:9px; color:var(--grey-600); font-weight:500; transition:color 0.2s; }
+  .nav-item.active .ni, .nav-item.active .nl { color:var(--orange-800); }
+
+  /* ── SCROLL ── */
+  .sc { overflow-y:auto; scrollbar-width:none; }
+  .sc::-webkit-scrollbar { display:none; }
+
+  /* ── HERO CARD ── */
+  .hero-card { margin:0 18px 14px; border-radius:18px; padding:18px; position:relative; overflow:hidden; }
+  .hero-circle { position:absolute; right:-18px; top:-18px; width:100px; height:100px; background:rgba(255,255,255,0.1); border-radius:50%; }
+
+  /* ── SECTION TITLE ── */
+  .sec-title { font-family:'Poppins',sans-serif; font-size:13px; font-weight:600; color:white; padding:0 18px; margin-bottom:8px; display:flex; justify-content:space-between; align-items:center; }
+  .see-all { font-size:11px; color:var(--orange-800); font-weight:500; cursor:pointer; }
+
+  /* ── BUTTONS ── */
+  .btn { border:none; font-family:'Poppins',sans-serif; cursor:pointer; transition:all 0.18s; border-radius:6px; font-weight:700; font-size:12px; letter-spacing:1px; text-transform:uppercase; padding:12px 20px; }
+  .btn-orange { background:var(--orange-800); color:white; }
+  .btn-orange:hover { background:var(--orange-600); }
+  .btn-navy { background:var(--navy); color:white; }
+  .btn-outline { background:transparent; border:1.5px solid var(--blue-400); color:var(--blue-400); }
+  .btn-teal { background:var(--teal); color:white; }
+  .btn-block { width:100%; display:block; text-align:center; }
+
+  /* ── QUICK ACTIONS ── */
+  .qa-row { display:flex; gap:7px; padding:0 18px; margin-bottom:16px; }
+  .qa-btn { flex:1; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.07); border-radius:12px; padding:11px 5px; display:flex; flex-direction:column; align-items:center; gap:4px; cursor:pointer; transition:all 0.2s; }
+  .qa-btn:hover { background:rgba(255,84,23,0.1); border-color:rgba(255,84,23,0.3); }
+  .qa-btn .qi { font-size:17px; }
+  .qa-btn .ql { font-size:9px; font-weight:500; color:var(--grey-600); }
+
+  /* ── GROUP CHIPS ── */
+  .gchips { display:flex; gap:6px; padding:0 18px; margin-bottom:12px; overflow-x:auto; scrollbar-width:none; }
+  .gchips::-webkit-scrollbar { display:none; }
+  .gchip { padding:5px 12px; border-radius:20px; white-space:nowrap; font-size:10px; font-weight:500; cursor:pointer; flex-shrink:0; font-family:'Poppins',sans-serif; }
+
+  /* ── GROUP CARDS ── */
+  .group-cards { display:flex; flex-direction:column; gap:7px; padding:0 18px; }
+  .group-card { background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.07); border-radius:14px; padding:13px; cursor:pointer; transition:all 0.2s; }
+  .group-card:hover { border-color:rgba(255,84,23,0.3); background:rgba(255,84,23,0.04); }
+  .gc-h { display:flex; align-items:center; gap:9px; margin-bottom:9px; }
+  .gc-em { width:36px; height:36px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:17px; flex-shrink:0; }
+  .gc-n { font-size:12px; font-weight:600; color:white; }
+  .gc-m { font-size:10px; color:var(--grey-600); margin-top:1px; font-weight:400; }
+  .gc-a { margin-left:auto; text-align:right; }
+  .gc-amt { font-family:'Poppins',sans-serif; font-size:14px; font-weight:700; }
+  .gc-al { font-size:9px; color:var(--grey-600); font-weight:400; }
+  .gc-prog { height:3px; background:rgba(255,255,255,0.07); border-radius:2px; overflow:hidden; margin-bottom:8px; }
+  .gc-pf { height:100%; border-radius:2px; }
+  .gc-avs { display:flex; }
+  .sav { width:19px; height:19px; border-radius:50%; border:2px solid var(--surface); margin-left:-5px; font-size:7px; display:flex; align-items:center; justify-content:center; font-weight:700; color:white; }
+  .sav:first-child { margin-left:0; }
+
+  /* ── EXPENSE LIST ── */
+  .exp-list { padding:0 18px; display:flex; flex-direction:column; gap:6px; max-height:210px; overflow-y:auto; }
+  .exp-item { display:flex; align-items:center; gap:9px; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.06); border-radius:12px; padding:10px; }
+  .exp-ic { width:34px; height:34px; border-radius:9px; display:flex; align-items:center; justify-content:center; font-size:15px; flex-shrink:0; }
+  .exp-t { font-size:11px; font-weight:500; color:white; }
+  .exp-m { font-size:9px; color:var(--grey-600); margin-top:1px; font-weight:400; }
+  .exp-a { font-family:'Poppins',sans-serif; font-size:12px; font-weight:700; color:white; }
+  .exp-s { font-size:9px; margin-top:1px; font-weight:500; }
+  .ok { color:var(--green); } .pend { color:var(--gold); }
+
+  /* ── NOTIFICATION ── */
+  .notif-item { margin:0 18px 7px; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.07); border-radius:13px; padding:13px; cursor:pointer; transition:all 0.2s; }
+  .notif-item.urgent { border-color:rgba(255,84,23,0.4); background:rgba(255,84,23,0.05); }
+  .notif-item.payshap { border-color:rgba(227,24,55,0.4); background:rgba(227,24,55,0.05); }
+  .ni-h { display:flex; align-items:center; gap:9px; margin-bottom:7px; }
+  .ni-ic { width:34px; height:34px; border-radius:9px; display:flex; align-items:center; justify-content:center; font-size:16px; flex-shrink:0; }
+  .ni-title { font-size:12px; font-weight:600; color:white; }
+  .ni-time { font-size:9px; color:var(--grey-600); font-weight:400; }
+  .ni-body { font-size:11px; color:var(--grey-600); line-height:1.45; margin-bottom:9px; font-weight:400; }
+  .ni-acts { display:flex; gap:7px; }
+  .ni-act { padding:6px 12px; border-radius:6px; font-size:10px; font-weight:700; cursor:pointer; font-family:'Poppins',sans-serif; letter-spacing:0.5px; text-transform:uppercase; }
+
+  /* ── PARTNER ORDER ── */
+  .partner-hero { margin:0 18px 12px; background:linear-gradient(135deg,#FF6600 0%,#CC4400 100%); border-radius:18px; padding:16px; display:flex; align-items:center; gap:12px; position:relative; overflow:hidden; }
+  .partner-hero::after { content:''; position:absolute; right:-15px; top:-15px; width:80px; height:80px; background:rgba(255,255,255,0.1); border-radius:50%; }
+  .p-logo-big { width:48px; height:48px; background:white; border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:10px; font-weight:800; color:#FF6600; flex-shrink:0; }
+  .ph-name { font-family:'Poppins',sans-serif; font-size:16px; font-weight:700; color:white; }
+  .ph-sub { font-size:10px; color:rgba(255,255,255,0.75); margin-top:2px; font-weight:400; }
+
+  .menu-items { padding:0 18px; display:flex; flex-direction:column; gap:7px; }
+  .mi { background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.06); border-radius:13px; padding:11px; display:flex; align-items:center; gap:10px; }
+  .mi-em { font-size:24px; flex-shrink:0; }
+  .mi-name { font-size:12px; font-weight:500; color:white; }
+  .mi-desc { font-size:10px; color:var(--grey-600); margin-top:1px; font-weight:400; }
+  .mi-price { margin-left:auto; font-family:'Poppins',sans-serif; font-size:13px; font-weight:700; color:white; }
+  .qty-row { display:flex; align-items:center; gap:7px; margin-top:6px; }
+  .qty-row button { width:24px; height:24px; border-radius:6px; border:none; background:rgba(255,255,255,0.1); color:white; font-size:13px; cursor:pointer; transition:background 0.2s; font-family:'Poppins',sans-serif; }
+  .qty-row button:hover { background:rgba(255,84,23,0.4); }
+  .qty-val { font-size:12px; font-weight:600; color:white; min-width:14px; text-align:center; }
+
+  .cart-bar { margin:12px 18px 0; background:rgba(255,102,0,0.1); border:1px solid rgba(255,102,0,0.25); border-radius:13px; padding:11px 13px; display:flex; align-items:center; justify-content:space-between; }
+  .ci-label { font-size:10px; color:var(--grey-600); font-weight:400; }
+  .ci-amt { font-family:'Poppins',sans-serif; font-size:17px; font-weight:700; color:white; }
+  .ci-note { font-size:9px; color:var(--grey-600); margin-top:1px; font-weight:400; }
+
+  /* ── PAY@ CHECKOUT — pixel-perfect ── */
+  #payat-checkout { background:white; }
+  .co-scroll { height:100%; overflow-y:auto; background:white; }
+  .co-header { padding:14px 18px 12px; border-bottom:1px solid #F0F0F0; }
+  .co-logo-row { display:flex; align-items:center; gap:8px; margin-bottom:14px; }
+  .co-dot { width:32px; height:32px; background:var(--orange-800); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:10px; font-weight:800; color:white; }
+  .co-brand { font-family:'Poppins',sans-serif; font-size:16px; font-weight:700; color:var(--navy); }
+  .co-secure { margin-left:auto; font-size:11px; color:var(--grey-600); font-weight:400; }
+  .co-merchant { font-size:12px; color:var(--orange-800); font-weight:500; margin-bottom:4px; }
+  .co-amount { font-family:'Poppins',sans-serif; font-size:28px; font-weight:700; color:var(--navy); }
+  .co-note { margin:10px 0 0; background:var(--orange-200); border-radius:8px; padding:10px 12px; font-size:11px; color:var(--orange-800); font-weight:400; line-height:1.5; display:none; }
+
+  .co-q { padding:14px 18px 8px; font-size:13px; font-weight:600; color:var(--navy); }
+
+  /* pay option rows — matching screenshot exactly */
+  .po { display:flex; align-items:center; padding:11px 18px; border-bottom:1px solid #F5F5F5; cursor:pointer; transition:background 0.15s; gap:10px; }
+  .po:hover { background:#FFF6F2; }
+  .po-left { display:flex; align-items:center; gap:8px; min-width:120px; }
+  .po-icon-wrap { width:28px; height:28px; display:flex; align-items:center; justify-content:center; }
+  .po-label { font-size:10px; font-weight:700; color:var(--grey-600); letter-spacing:0.8px; text-transform:uppercase; }
+  .po-badges { display:flex; gap:4px; align-items:center; flex-wrap:wrap; }
+  .badge-pill { height:24px; border-radius:5px; display:flex; align-items:center; justify-content:center; padding:0 7px; font-size:9px; font-weight:800; white-space:nowrap; letter-spacing:0.3px; }
+
+  /* bank rows */
+  .bank-row { display:flex; align-items:center; padding:12px 18px; border-bottom:1px solid #F5F5F5; cursor:pointer; transition:background 0.15s; gap:12px; }
+  .bank-row:hover { background:#FFF6F2; }
+  .bank-logo { width:52px; height:34px; border-radius:7px; display:flex; align-items:center; justify-content:center; font-size:9px; font-weight:800; color:white; flex-shrink:0; text-align:center; line-height:1.2; }
+  .bank-name { font-size:13px; font-weight:500; color:var(--navy); }
+  .bank-sub { font-size:10px; color:var(--grey-600); margin-left:auto; font-weight:400; }
+
+  /* QR section inside checkout */
+  .qr-section { margin:10px 18px; background:var(--grey-200); border-radius:12px; padding:14px; display:flex; flex-direction:column; align-items:center; gap:8px; }
+  .qr-box { width:100px; height:100px; background:white; border-radius:8px; display:flex; align-items:center; justify-content:center; padding:8px; }
+  .qr-box svg { width:84px; height:84px; }
+  .qr-title { font-size:11px; font-weight:600; color:var(--navy); text-align:center; }
+  .qr-sub { font-size:10px; color:var(--grey-600); text-align:center; font-weight:400; max-width:200px; line-height:1.4; }
+
+  .co-footer { padding:12px 18px; text-align:center; font-size:10px; color:var(--grey-600); font-weight:400; }
+  .co-footer span { color:var(--orange-800); font-weight:600; }
+
+  /* ── SETTLE ── */
+  #settle { background:var(--surface); }
+  .settle-hero { margin:0 18px 14px; background:linear-gradient(135deg,var(--teal) 0%,#0F766E 100%); border-radius:18px; padding:18px; text-align:center; }
+  .sh-lbl { font-size:11px; color:rgba(255,255,255,0.7); font-weight:400; }
+  .sh-amt { font-family:'Poppins',sans-serif; font-size:32px; font-weight:700; color:white; margin:5px 0; }
+  .sh-to { font-size:12px; color:rgba(255,255,255,0.7); font-weight:400; }
+  .sh-note { font-size:10px; color:rgba(255,255,255,0.5); margin-top:5px; font-weight:400; }
+
+  /* ── ADD SPEND ── */
+  #add-spend { background:var(--surface); }
+  .scan-zone { margin:0 18px 13px; background:rgba(255,255,255,0.03); border:2px dashed rgba(255,84,23,0.4); border-radius:16px; padding:18px; display:flex; flex-direction:column; align-items:center; gap:7px; cursor:pointer; transition:all 0.2s; }
+  .scan-zone:hover { background:rgba(255,84,23,0.05); border-color:var(--orange-800); }
+  .form-grp { padding:0 18px; margin-bottom:10px; }
+  .form-lbl { font-size:9px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--grey-600); margin-bottom:6px; display:block; }
+  .form-inp { width:100%; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); border-radius:8px; padding:10px 12px; color:white; font-family:'Poppins',sans-serif; font-size:12px; outline:none; transition:border-color 0.2s; font-weight:400; }
+  .form-inp:focus { border-color:var(--orange-800); }
+  .split-row { display:flex; gap:5px; padding:0 18px; margin-bottom:12px; }
+  .split-opt { flex:1; padding:8px; border-radius:7px; border:1px solid rgba(255,255,255,0.1); background:transparent; color:var(--grey-600); font-size:10px; font-weight:500; cursor:pointer; font-family:'Poppins',sans-serif; transition:all 0.2s; text-align:center; }
+  .split-opt.active { background:var(--orange-800); border-color:var(--orange-800); color:white; }
+
+  /* ── DASHBOARD ── */
+  #dashboard { background:var(--surface); }
+  .period-row { display:flex; gap:5px; padding:0 18px; margin-bottom:12px; }
+  .period-chip { padding:5px 12px; border-radius:20px; border:1px solid rgba(255,255,255,0.1); background:transparent; color:var(--grey-600); font-size:10px; cursor:pointer; font-family:'Poppins',sans-serif; transition:all 0.2s; font-weight:500; }
+  .period-chip.active { background:var(--orange-800); border-color:var(--orange-800); color:white; }
+
+  /* ── QR SCAN SCREEN ── */
+  #qr-scan { background:#000; }
+  .qr-viewfinder { position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; }
+  .qr-overlay { position:absolute; inset:0; background:rgba(0,0,0,0.65); }
+  .qr-window { position:relative; z-index:10; display:flex; flex-direction:column; align-items:center; gap:16px; }
+  .qr-frame { width:200px; height:200px; position:relative; }
+  .qr-frame::before, .qr-frame::after { content:''; position:absolute; width:32px; height:32px; border-color:var(--orange-800); border-style:solid; }
+  .qr-frame::before { top:0; left:0; border-width:3px 0 0 3px; }
+  .qr-frame::after { bottom:0; right:0; border-width:0 3px 3px 0; }
+  .qr-frame .c2::before { content:''; position:absolute; top:0; right:0; width:32px; height:32px; border-color:var(--orange-800); border-style:solid; border-width:3px 3px 0 0; }
+  .qr-frame .c2::after { content:''; position:absolute; bottom:0; left:0; width:32px; height:32px; border-color:var(--orange-800); border-style:solid; border-width:0 0 3px 3px; }
+  .qr-scan-line { position:absolute; left:0; right:0; height:2px; background:var(--orange-800); top:50%; animation:scanLine 2s ease-in-out infinite; opacity:0.8; }
+  @keyframes scanLine { 0%,100%{top:10%} 50%{top:90%} }
+  .qr-instructions { color:white; font-size:13px; font-weight:500; text-align:center; padding:0 30px; line-height:1.5; }
+  .qr-sub-inst { color:rgba(255,255,255,0.6); font-size:11px; text-align:center; font-weight:400; }
+  .qr-modes { display:flex; gap:8px; margin-top:4px; }
+  .qr-mode-chip { padding:6px 14px; border-radius:20px; font-size:10px; font-weight:600; cursor:pointer; transition:all 0.2s; font-family:'Poppins',sans-serif; }
+
+  /* ── SUCCESS ── */
+  #success { background:var(--surface); display:flex; align-items:center; justify-content:center; }
+  .succ-wrap { display:flex; flex-direction:column; align-items:center; padding:0 18px; width:100%; }
+  .succ-anim { width:84px; height:84px; background:linear-gradient(135deg,var(--teal),#0F766E); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:36px; margin-bottom:18px; animation:popIn 0.4s cubic-bezier(0.175,0.885,0.32,1.275); }
+  @keyframes popIn { from{transform:scale(0);opacity:0} to{transform:scale(1);opacity:1} }
+  .succ-title { font-family:'Poppins',sans-serif; font-size:20px; font-weight:700; color:white; margin-bottom:5px; }
+  .succ-sub { font-size:12px; color:var(--grey-600); text-align:center; margin-bottom:20px; line-height:1.5; font-weight:400; }
+  .succ-card { background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.07); border-radius:13px; padding:13px; width:100%; margin-bottom:12px; }
+  .sd-row { display:flex; justify-content:space-between; font-size:11px; padding:5px 0; border-bottom:1px solid rgba(255,255,255,0.05); }
+  .sd-row:last-child { border-bottom:none; }
+  .sd-k { color:var(--grey-600); font-weight:400; } .sd-v { color:white; font-weight:500; }
+  .succ-note { background:rgba(13,148,136,0.08); border:1px solid rgba(13,148,136,0.2); border-radius:10px; padding:9px 13px; width:100%; margin-bottom:14px; font-size:10px; color:var(--grey-600); text-align:center; font-weight:400; }
+
+  /* ── TOAST ── */
+  .toast { position:fixed; bottom:40px; left:50%; transform:translateX(-50%) translateY(100px); background:rgba(0,23,82,0.95); backdrop-filter:blur(10px); border:1px solid rgba(255,255,255,0.1); border-radius:10px; padding:9px 16px; color:white; font-size:12px; font-weight:500; transition:transform 0.3s cubic-bezier(0.175,0.885,0.32,1.275); z-index:1000; white-space:nowrap; font-family:'Poppins',sans-serif; }
+  .toast.show { transform:translateX(-50%) translateY(0); }
+
+  /* ── NAV DOTS ── */
+  .nav-dots { display:flex; flex-direction:column; gap:7px; position:absolute; right:-26px; top:50%; transform:translateY(-50%); }
+  .nav-dot { width:7px; height:7px; border-radius:50%; background:rgba(255,255,255,0.2); cursor:pointer; transition:all 0.2s; }
+  .nav-dot.active { background:var(--orange-800); transform:scale(1.35); }
+
+  @media(max-width:800px){.brand-panel{display:none;}.scene{justify-content:center;}}
+</style>
+
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#FF5417">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="GroupPay">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+  <script>
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", () => {
+        navigator.serviceWorker.register("sw.js")
+          .then(r => console.log("SW registered"))
+          .catch(e => console.log("SW error", e));
+      });
+    }
+  </script>
+</head>
+<body>
+<div class="toast" id="toast">Done</div>
+
+<div class="scene">
+  <!-- ══════ BRAND PANEL ══════ -->
+  <div class="brand-panel">
+    <div>
+      <div class="brand-logo">
+        <div class="brand-dot">p@</div>
+        <div>
+          <div class="brand-wordmark">Group<span class="at">Pay</span></div>
+          <div class="brand-sub">powered by pay@</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="brand-hero">
+      <h1>Split smarter.<br><em>Together.</em></h1>
+      <p>The first group expense app built on Pay@'s payment rails — every settlement, partner purchase and QR payment flows through Pay@.</p>
+    </div>
+
+    <div>
+      <div class="panel-section-title">3 Revenue Moments for Pay@</div>
+      <div class="moment-card active" id="m1" onclick="selectMoment(1)">
+        <div class="m-num">MOMENT 1</div>
+        <div class="m-title">Group Settlement</div>
+        <div class="m-desc">Group closes → push notification → member taps → Pay@ checkout appears → payment confirmed. Every settlement = Pay@ transaction fee.</div>
+      </div>
+      <div class="moment-card" id="m2" onclick="selectMoment(2)">
+        <div class="m-num">MOMENT 2</div>
+        <div class="m-title">In-App Partner Purchase</div>
+        <div class="m-desc">Order via 60|60 inside GroupPay → Pay@ checkout to complete → auto-logged as group expense. Zero friction, double revenue.</div>
+      </div>
+      <div class="moment-card" id="m3" onclick="selectMoment(3)">
+        <div class="m-num">MOMENT 3</div>
+        <div class="m-title">QR & PayShap Request</div>
+        <div class="m-desc">Scan to pay at a restaurant or show a QR code for members to scan and pay their share. PayShap RTP notification also triggered instantly.</div>
+      </div>
+    </div>
+
+    <div>
+      <div class="panel-section-title">Pay@ checkout — all payment methods</div>
+      <div class="partners-grid">
+        <div class="partner-chip"><div class="p-icon" style="background:#C8102E;color:white;">MC</div>Mastercard</div>
+        <div class="partner-chip"><div class="p-icon" style="background:#1A1F71;color:white;font-size:7px;">VISA</div>Visa</div>
+        <div class="partner-chip"><div class="p-icon" style="background:#2671C9;color:white;font-size:7px;">AMEX</div>Amex</div>
+        <div class="partner-chip"><div class="p-icon" style="background:#000;color:white;">🍎</div>Apple Pay</div>
+        <div class="partner-chip"><div class="p-icon" style="background:#1A73E8;color:white;font-weight:800;">G</div>Google Pay</div>
+        <div class="partner-chip"><div class="p-icon" style="background:#FF6600;color:white;font-size:7px;">60|60</div>60|60</div>
+        <div class="partner-chip"><div class="p-icon" style="background:#009639;color:white;font-size:7px;">FNB</div>FNB</div>
+        <div class="partner-chip"><div class="p-icon" style="background:#C8102E;color:white;font-size:7px;">absa</div>ABSA</div>
+        <div class="partner-chip"><div class="p-icon" style="background:#004F9F;color:white;font-size:6px;text-align:center;line-height:1.1;">CAP<br>ITEC</div>Capitec</div>
+        <div class="partner-chip"><div class="p-icon" style="background:#007AC9;color:white;font-size:7px;">NED</div>Nedbank</div>
+        <div class="partner-chip"><div class="p-icon" style="background:#E31837;color:white;font-size:7px;">PS</div>PayShap</div>
+        <div class="partner-chip"><div class="p-icon" style="background:#5433FF;color:white;font-size:7px;">EFT</div>Ozow EFT</div>
+        <div class="partner-chip"><div class="p-icon" style="background:#00A651;color:white;font-size:7px;">SNAP</div>SnapScan</div>
+        <div class="partner-chip"><div class="p-icon" style="background:#555;color:white;">🎟</div>Vouchers</div>
+        <div class="partner-chip"><div class="p-icon" style="background:#111;color:white;">📱</div>QR Scan</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════ PHONE ══════ -->
+  <div class="phone-wrap">
+    <div class="phone">
+
+      <!-- ═══════ HOME ═══════ -->
+      <div class="screen active" id="home">
+        <div class="status-bar" style="background:var(--surface);">
+          <span class="st-time">9:41</span>
+          <div class="st-icons"><span>●●●</span><span>🔋</span></div>
+        </div>
+        <div class="app-header">
+          <div class="app-logo"><div class="dot">p@</div><div class="wm">Group<span>Pay</span></div></div>
+          <div style="position:relative;"><div class="av">TM</div><div class="badge">3</div></div>
+        </div>
+        <div class="sc" style="height:calc(100% - 46px - 68px);">
+          <div class="hero-card" style="background:linear-gradient(135deg,var(--orange-800) 0%,#C2410C 100%);">
+            <div class="hero-circle"></div>
+            <div style="font-size:12px;color:rgba(255,255,255,0.75);font-weight:400;">Good morning 👋</div>
+            <div style="font-family:'Poppins',sans-serif;font-size:18px;font-weight:700;color:white;margin-top:1px;">Thabo Mokoena</div>
+            <div style="font-size:10px;color:rgba(255,255,255,0.6);margin-top:13px;font-weight:400;">Outstanding across all groups</div>
+            <div style="font-family:'Poppins',sans-serif;font-size:28px;font-weight:700;color:white;margin-top:1px;">R 1,248.50</div>
+            <div style="font-size:10px;color:rgba(255,255,255,0.6);margin-top:2px;font-weight:400;">3 active groups · 2 settlements due</div>
+          </div>
+          <div class="qa-row">
+            <div class="qa-btn" onclick="showScreen('add-spend')"><div class="qi">📷</div><div class="ql">Scan Slip</div></div>
+            <div class="qa-btn" onclick="showScreen('qr-scan')"><div class="qi">⬛</div><div class="ql">QR Pay</div></div>
+            <div class="qa-btn" onclick="showScreen('notifications')"><div class="qi">🔔</div><div class="ql">Alerts</div></div>
+            <div class="qa-btn" onclick="showScreen('partner-order')"><div class="qi">🛒</div><div class="ql">Order</div></div>
+            <div class="qa-btn" onclick="showScreen('dashboard')"><div class="qi">📊</div><div class="ql">Insights</div></div>
+          </div>
+          <div class="gchips">
+            <div class="gchip" style="background:rgba(255,84,23,0.15);color:var(--orange-800);border:1px solid rgba(255,84,23,0.3);">All Groups</div>
+            <div class="gchip" style="background:rgba(255,255,255,0.05);color:var(--grey-600);border:1px solid rgba(255,255,255,0.07);">✈️ Travel</div>
+            <div class="gchip" style="background:rgba(255,255,255,0.05);color:var(--grey-600);border:1px solid rgba(255,255,255,0.07);">👨‍👩‍👧 Family</div>
+            <div class="gchip" style="background:rgba(255,255,255,0.05);color:var(--grey-600);border:1px solid rgba(255,255,255,0.07);">💼 Work</div>
+            <div class="gchip" style="background:rgba(255,255,255,0.05);color:var(--grey-600);border:1px solid rgba(255,255,255,0.07);">🤝 Stokvel</div>
+          </div>
+          <div class="sec-title">Active groups <span class="see-all">See all</span></div>
+          <div class="group-cards">
+            <div class="group-card" onclick="showScreen('group-detail')">
+              <div class="gc-h"><div class="gc-em" style="background:rgba(255,84,23,0.12);">✈️</div><div><div class="gc-n">Cape Town Trip</div><div class="gc-m">5 members · Closed — settle now</div></div><div class="gc-a"><div class="gc-amt" style="color:var(--gold);">R 320</div><div class="gc-al">you owe</div></div></div>
+              <div class="gc-prog"><div class="gc-pf" style="width:68%;background:var(--orange-800);"></div></div>
+              <div class="gc-avs"><div class="sav" style="background:var(--orange-800);">TM</div><div class="sav" style="background:var(--teal);">SP</div><div class="sav" style="background:#7C3AED;">LN</div><div class="sav" style="background:var(--gold);">KB</div><div class="sav" style="background:var(--red);">+1</div></div>
+            </div>
+            <div class="group-card" onclick="showScreen('group-detail')">
+              <div class="gc-h"><div class="gc-em" style="background:rgba(13,148,136,0.12);">👨‍👩‍👧</div><div><div class="gc-n">Mokoena Family</div><div class="gc-m">4 members · Active</div></div><div class="gc-a"><div class="gc-amt" style="color:var(--green);">R 85</div><div class="gc-al">owed to you</div></div></div>
+              <div class="gc-prog"><div class="gc-pf" style="width:40%;background:var(--teal);"></div></div>
+              <div class="gc-avs"><div class="sav" style="background:var(--orange-800);">TM</div><div class="sav" style="background:var(--teal);">NM</div><div class="sav" style="background:#7C3AED;">ZM</div></div>
+            </div>
+            <div class="group-card" onclick="showScreen('partner-order')">
+              <div class="gc-h"><div class="gc-em" style="background:rgba(255,102,0,0.12);">🛒</div><div><div class="gc-n">60|60 Group Order</div><div class="gc-m">Cape Town Trip · Cart ready</div></div><div class="gc-a"><div class="gc-amt" style="color:#FF6600;">R 485</div><div class="gc-al">in cart</div></div></div>
+              <div class="gc-prog"><div class="gc-pf" style="width:100%;background:#FF6600;"></div></div>
+              <div class="gc-avs"><div class="sav" style="background:var(--orange-800);">TM</div><div class="sav" style="background:var(--teal);">SP</div><div class="sav" style="background:#7C3AED;">LN</div><div class="sav" style="background:var(--gold);">+2</div></div>
+            </div>
+          </div>
+          <div style="height:12px;"></div>
+        </div>
+        <div class="bottom-nav">
+          <div class="nav-item active"><div class="ni">🏠</div><div class="nl">Home</div></div>
+          <div class="nav-item" onclick="showScreen('group-detail')"><div class="ni">👥</div><div class="nl">Groups</div></div>
+          <div class="nav-item" onclick="showScreen('qr-scan')"><div class="ni">⬛</div><div class="nl">QR Pay</div></div>
+          <div class="nav-item" onclick="showScreen('notifications')"><div class="ni" style="position:relative;">🔔<div class="badge" style="font-size:7px;">2</div></div><div class="nl">Alerts</div></div>
+          <div class="nav-item" onclick="showScreen('dashboard')"><div class="ni">📊</div><div class="nl">Insights</div></div>
+        </div>
+      </div>
+
+      <!-- ═══════ GROUP DETAIL ═══════ -->
+      <div class="screen" id="group-detail">
+        <div class="status-bar" style="background:var(--surface);"><span class="st-time">9:41</span><div class="st-icons"><span>●●●</span><span>🔋</span></div></div>
+        <div class="back-header"><div class="back-btn" onclick="showScreen('home')">←</div><div><div class="bh-title">✈️ Cape Town Trip</div><div class="bh-sub">Closed · R 4,250 total</div></div><div style="margin-left:auto;font-size:15px;cursor:pointer;" onclick="showToast('Group settings')">⚙️</div></div>
+        <div class="sc" style="height:calc(100% - 46px - 68px);">
+          <div class="hero-card" style="background:linear-gradient(135deg,#1E3A5F,var(--surface-2));border:1px solid rgba(255,255,255,0.07);">
+            <div style="font-size:10px;color:var(--grey-600);font-weight:400;">Total group spend</div>
+            <div style="font-family:'Poppins',sans-serif;font-size:24px;font-weight:700;color:white;margin:3px 0;">R 4,250.00</div>
+            <div style="display:flex;gap:6px;margin-top:12px;">
+              <div style="flex:1;background:rgba(0,0,0,0.2);border-radius:9px;padding:8px;text-align:center;"><div style="font-size:9px;color:var(--grey-600);font-weight:400;">You (TM)</div><div style="font-family:'Poppins',sans-serif;font-size:12px;font-weight:700;color:white;margin-top:2px;">R 1,200</div><div style="font-size:9px;color:var(--green);margin-top:1px;">+R 680</div></div>
+              <div style="flex:1;background:rgba(0,0,0,0.2);border-radius:9px;padding:8px;text-align:center;"><div style="font-size:9px;color:var(--grey-600);font-weight:400;">Sipho</div><div style="font-family:'Poppins',sans-serif;font-size:12px;font-weight:700;color:white;margin-top:2px;">R 850</div><div style="font-size:9px;color:var(--gold);margin-top:1px;">owes R 150</div></div>
+              <div style="flex:1;background:rgba(0,0,0,0.2);border-radius:9px;padding:8px;text-align:center;"><div style="font-size:9px;color:var(--grey-600);font-weight:400;">Lerato</div><div style="font-family:'Poppins',sans-serif;font-size:12px;font-weight:700;color:white;margin-top:2px;">R 2,200</div><div style="font-size:9px;color:var(--green);margin-top:1px;">+R 1,350</div></div>
+            </div>
+          </div>
+          <!-- Settlement alert -->
+          <div style="margin:0 18px 10px;background:rgba(255,84,23,0.09);border:1px solid rgba(255,84,23,0.35);border-radius:13px;padding:12px;">
+            <div style="font-size:11px;font-weight:700;color:var(--orange-800);margin-bottom:3px;">⚠️ Group closed — settlement due</div>
+            <div style="font-size:10px;color:var(--grey-600);margin-bottom:9px;font-weight:400;">You owe Lerato R 320.00 · Sipho owes you R 150.00</div>
+            <div style="display:flex;gap:7px;">
+              <button class="btn btn-orange" style="flex:1;padding:10px;" onclick="openSettleCheckout()">Pay R 320 via Pay@ →</button>
+              <button class="btn btn-outline" style="flex:none;padding:10px 12px;" onclick="showScreen('qr-scan')">⬛ QR</button>
+            </div>
+          </div>
+          <div class="sec-title" style="margin-bottom:7px;">Expenses <span class="see-all" onclick="showScreen('add-spend')">+ Add</span></div>
+          <div class="exp-list">
+            <div class="exp-item"><div class="exp-ic" style="background:rgba(255,102,0,0.1);">🛒</div><div style="flex:1;"><div class="exp-t">60|60 Group Order</div><div class="exp-m">Partner purchase · Auto-logged</div></div><div style="text-align:right;"><div class="exp-a">R 485</div><div class="exp-s ok">✓ Paid via Pay@</div></div></div>
+            <div class="exp-item"><div class="exp-ic" style="background:rgba(255,84,23,0.1);">🍔</div><div style="flex:1;"><div class="exp-t">Burger King Waterfront</div><div class="exp-m">Scanned receipt · Split equally</div></div><div style="text-align:right;"><div class="exp-a">R 485</div><div class="exp-s ok">✓ Approved</div></div></div>
+            <div class="exp-item"><div class="exp-ic" style="background:rgba(13,148,136,0.1);">🚕</div><div style="flex:1;"><div class="exp-t">Uber · Airport → Hotel</div><div class="exp-m">Auto-imported from Uber</div></div><div style="text-align:right;"><div class="exp-a">R 620</div><div class="exp-s ok">✓ Approved</div></div></div>
+            <div class="exp-item"><div class="exp-ic" style="background:rgba(245,158,11,0.1);">🍷</div><div style="flex:1;"><div class="exp-t">Karibu Restaurant</div><div class="exp-m">QR scan-to-pay · PayShap RTP sent</div></div><div style="text-align:right;"><div class="exp-a">R 1,240</div><div class="exp-s pend">⏳ RTP Pending</div></div></div>
+            <div class="exp-item"><div class="exp-ic" style="background:rgba(124,58,237,0.1);">🏨</div><div style="flex:1;"><div class="exp-t">The Silo Hotel</div><div class="exp-m">Booking confirmation</div></div><div style="text-align:right;"><div class="exp-a">R 1,420</div><div class="exp-s ok">✓ Approved</div></div></div>
+          </div>
+          <div style="margin:10px 18px 0;background:rgba(220,38,38,0.07);border:1px solid rgba(220,38,38,0.18);border-radius:11px;padding:10px 12px;display:flex;align-items:center;gap:9px;"><span style="font-size:15px;">🔒</span><div><div style="font-size:11px;font-weight:600;color:white;">Group closed by admin</div><div style="font-size:9px;color:var(--grey-600);font-weight:400;">All members notified via SMS, WhatsApp & app</div></div></div>
+          <div style="height:10px;"></div>
+        </div>
+        <div class="bottom-nav">
+          <div class="nav-item" onclick="showScreen('home')"><div class="ni">🏠</div><div class="nl">Home</div></div>
+          <div class="nav-item active"><div class="ni">👥</div><div class="nl">Groups</div></div>
+          <div class="nav-item" onclick="showScreen('qr-scan')"><div class="ni">⬛</div><div class="nl">QR Pay</div></div>
+          <div class="nav-item" onclick="showScreen('notifications')"><div class="ni">🔔</div><div class="nl">Alerts</div></div>
+          <div class="nav-item" onclick="showScreen('dashboard')"><div class="ni">📊</div><div class="nl">Insights</div></div>
+        </div>
+      </div>
+
+      <!-- ═══════ QR SCAN SCREEN ═══════ -->
+      <div class="screen" id="qr-scan">
+        <div class="status-bar" style="background:transparent;position:absolute;z-index:20;"><span class="st-time">9:41</span><div class="st-icons"><span>●●●</span><span>🔋</span></div></div>
+        <div class="qr-viewfinder">
+          <div class="qr-overlay"></div>
+          <!-- Back btn -->
+          <div style="position:absolute;top:52px;left:18px;z-index:20;"><div class="back-btn" onclick="showScreen('group-detail')" style="background:rgba(0,0,0,0.5);">←</div></div>
+          <!-- Title -->
+          <div style="position:absolute;top:52px;left:50%;transform:translateX(-50%);z-index:20;text-align:center;">
+            <div style="font-family:'Poppins',sans-serif;font-size:15px;font-weight:600;color:white;">QR Pay</div>
+          </div>
+
+          <div class="qr-window">
+            <div class="qr-frame">
+              <div class="c2"></div>
+              <div class="qr-scan-line"></div>
+            </div>
+            <div class="qr-instructions">Point camera at a QR code to pay</div>
+            <div class="qr-sub-inst">Works with SnapScan, PayShap, Pay@ merchants & GroupPay settlement QRs</div>
+            <!-- Mode toggle -->
+            <div class="qr-modes">
+              <div class="qr-mode-chip" id="mode-scan" style="background:var(--orange-800);color:white;" onclick="setQrMode('scan')">Scan to Pay</div>
+              <div class="qr-mode-chip" id="mode-show" style="background:rgba(255,255,255,0.15);color:white;" onclick="setQrMode('show')">Show My QR</div>
+            </div>
+          </div>
+
+          <!-- Simulated scan result -->
+          <div id="scan-result" style="display:none;position:absolute;bottom:100px;left:0;right:0;margin:0 20px;z-index:20;">
+            <div style="background:white;border-radius:14px;padding:14px;">
+              <div style="font-size:10px;color:var(--grey-600);font-weight:400;margin-bottom:2px;">Karibu Restaurant · Table 4</div>
+              <div style="font-family:'Poppins',sans-serif;font-size:20px;font-weight:700;color:var(--navy);margin-bottom:10px;">R 248.00 <span style="font-size:12px;font-weight:400;color:var(--grey-600);">your share</span></div>
+              <button class="btn btn-orange btn-block" onclick="showScreen('payat-checkout')">PAY VIA PAY@ →</button>
+            </div>
+          </div>
+
+          <!-- Show My QR panel -->
+          <div id="my-qr-panel" style="display:none;position:absolute;bottom:80px;left:0;right:0;margin:0 20px;z-index:20;">
+            <div style="background:white;border-radius:14px;padding:16px;text-align:center;">
+              <div style="font-size:11px;color:var(--grey-600);font-weight:400;margin-bottom:8px;">Cape Town Trip · Your settlement QR</div>
+              <!-- QR code SVG -->
+              <div style="display:flex;justify-content:center;margin-bottom:10px;">
+                <svg width="110" height="110" viewBox="0 0 110 110" style="background:white;border-radius:6px;">
+                  <!-- QR pattern -->
+                  <rect x="5" y="5" width="30" height="30" rx="2" fill="none" stroke="#001752" stroke-width="3"/>
+                  <rect x="11" y="11" width="18" height="18" rx="1" fill="#001752"/>
+                  <rect x="75" y="5" width="30" height="30" rx="2" fill="none" stroke="#001752" stroke-width="3"/>
+                  <rect x="81" y="11" width="18" height="18" rx="1" fill="#001752"/>
+                  <rect x="5" y="75" width="30" height="30" rx="2" fill="none" stroke="#001752" stroke-width="3"/>
+                  <rect x="11" y="81" width="18" height="18" rx="1" fill="#001752"/>
+                  <!-- dots pattern -->
+                  <rect x="43" y="5" width="8" height="8" fill="#001752"/><rect x="55" y="5" width="8" height="8" fill="#001752"/><rect x="67" y="5" width="8" height="8" fill="#001752"/>
+                  <rect x="43" y="17" width="8" height="8" fill="#001752"/><rect x="67" y="17" width="8" height="8" fill="#001752"/>
+                  <rect x="43" y="29" width="8" height="8" fill="#001752"/><rect x="55" y="29" width="8" height="8" fill="#001752"/>
+                  <rect x="5" y="43" width="8" height="8" fill="#001752"/><rect x="17" y="43" width="8" height="8" fill="#001752"/><rect x="43" y="43" width="8" height="8" fill="#001752"/><rect x="67" y="43" width="8" height="8" fill="#001752"/><rect x="79" y="43" width="8" height="8" fill="#001752"/><rect x="97" y="43" width="8" height="8" fill="#001752"/>
+                  <rect x="5" y="55" width="8" height="8" fill="#001752"/><rect x="29" y="55" width="8" height="8" fill="#001752"/><rect x="55" y="55" width="8" height="8" fill="#001752"/><rect x="91" y="55" width="8" height="8" fill="#001752"/>
+                  <rect x="17" y="67" width="8" height="8" fill="#001752"/><rect x="43" y="67" width="8" height="8" fill="#001752"/><rect x="67" y="67" width="8" height="8" fill="#001752"/><rect x="79" y="67" width="8" height="8" fill="#001752"/>
+                  <rect x="43" y="79" width="8" height="8" fill="#001752"/><rect x="55" y="79" width="8" height="8" fill="#001752"/><rect x="97" y="79" width="8" height="8" fill="#001752"/>
+                  <rect x="43" y="91" width="8" height="8" fill="#001752"/><rect x="67" y="91" width="8" height="8" fill="#001752"/><rect x="79" y="91" width="8" height="8" fill="#001752"/>
+                  <!-- orange GP dot center -->
+                  <rect x="46" y="46" width="18" height="18" rx="4" fill="#FF5417"/>
+                  <text x="55" y="58" text-anchor="middle" font-family="Poppins,sans-serif" font-weight="700" font-size="9" fill="white">GP</text>
+                </svg>
+              </div>
+              <div style="font-family:'Poppins',sans-serif;font-size:16px;font-weight:700;color:var(--navy);">R 320.00</div>
+              <div style="font-size:10px;color:var(--grey-600);margin-top:2px;font-weight:400;">Lerato scans this to pay you · Powered by Pay@</div>
+            </div>
+          </div>
+
+          <!-- Bottom hint -->
+          <div style="position:absolute;bottom:30px;left:0;right:0;text-align:center;z-index:20;">
+            <div style="font-size:10px;color:rgba(255,255,255,0.5);font-weight:400;" id="qr-hint">Tap anywhere in viewfinder to simulate a scan</div>
+          </div>
+
+          <!-- Invisible tap target for scan sim -->
+          <div style="position:absolute;top:100px;left:0;right:0;bottom:100px;z-index:15;cursor:pointer;" onclick="simulateQrScan()"></div>
+        </div>
+      </div>
+
+      <!-- ═══════ PARTNER ORDER ═══════ -->
+      <div class="screen" id="partner-order">
+        <div class="status-bar" style="background:var(--surface);"><span class="st-time">9:41</span><div class="st-icons"><span>●●●</span><span>🔋</span></div></div>
+        <div class="back-header"><div class="back-btn" onclick="showScreen('home')">←</div><div><div class="bh-title">Partner Order</div><div class="bh-sub">Cape Town Trip · Order for group</div></div></div>
+        <div class="sc" style="height:calc(100% - 46px - 68px);">
+          <div class="partner-hero"><div class="p-logo-big">60|60</div><div><div class="ph-name">60|60 by Checkers</div><div class="ph-sub">60-minute delivery · Waterfront area</div></div></div>
+          <div style="margin:0 18px 11px;background:rgba(255,102,0,0.07);border:1px solid rgba(255,102,0,0.2);border-radius:9px;padding:9px 12px;font-size:10px;color:rgba(255,255,255,0.7);font-weight:400;">🧾 Order auto-logged as group expense · split equally between 5 members</div>
+          <div class="sec-title" style="margin-bottom:7px;">Menu</div>
+          <div class="menu-items">
+            <div class="mi"><div class="mi-em">🍔</div><div style="flex:1;"><div class="mi-name">Burger Combo ×5</div><div class="mi-desc">Steers · includes fries & drink</div><div class="qty-row"><button onclick="showToast('Updated')">−</button><span class="qty-val">5</span><button onclick="showToast('Updated')">+</button></div></div><div class="mi-price">R 285</div></div>
+            <div class="mi"><div class="mi-em">🥤</div><div style="flex:1;"><div class="mi-name">Cold Drinks ×5</div><div class="mi-desc">Assorted 330ml cans</div><div class="qty-row"><button onclick="showToast('Updated')">−</button><span class="qty-val">5</span><button onclick="showToast('Updated')">+</button></div></div><div class="mi-price">R 100</div></div>
+            <div class="mi"><div class="mi-em">🍟</div><div style="flex:1;"><div class="mi-name">Large Chips ×2</div><div class="mi-desc">For sharing</div><div class="qty-row"><button onclick="showToast('Updated')">−</button><span class="qty-val">2</span><button onclick="showToast('Updated')">+</button></div></div><div class="mi-price">R 60</div></div>
+            <div class="mi"><div class="mi-em">🚚</div><div style="flex:1;"><div class="mi-name">Delivery fee</div><div class="mi-desc">V&A Waterfront area</div></div><div class="mi-price">R 40</div></div>
+          </div>
+          <div class="cart-bar">
+            <div><div class="ci-label">Group total</div><div class="ci-amt">R 485.00</div><div class="ci-note">R 97 per person · auto-split</div></div>
+            <button class="btn btn-orange" onclick="open60Order()">PAY VIA PAY@ →</button>
+          </div>
+          <div style="height:10px;"></div>
+        </div>
+        <div class="bottom-nav">
+          <div class="nav-item" onclick="showScreen('home')"><div class="ni">🏠</div><div class="nl">Home</div></div>
+          <div class="nav-item" onclick="showScreen('group-detail')"><div class="ni">👥</div><div class="nl">Groups</div></div>
+          <div class="nav-item" onclick="showScreen('qr-scan')"><div class="ni">⬛</div><div class="nl">QR Pay</div></div>
+          <div class="nav-item active"><div class="ni">🛒</div><div class="nl">Order</div></div>
+          <div class="nav-item" onclick="showScreen('dashboard')"><div class="ni">📊</div><div class="nl">Insights</div></div>
+        </div>
+      </div>
+
+      <!-- ═══════ PAY@ CHECKOUT — pixel-perfect from screenshot ═══════ -->
+      <div class="screen" id="payat-checkout">
+        <div class="co-scroll">
+          <div class="co-header">
+            <div class="co-logo-row">
+              <div class="co-dot">p@</div>
+              <div class="co-brand">pay@</div>
+              <div class="co-secure">Secure Checkout</div>
+            </div>
+            <div class="co-merchant" id="co-merchant">Cape Town Trip · Lerato Nkosi</div>
+            <div class="co-amount" id="co-amount">R 320.00</div>
+            <div class="co-note" id="co-note">🧾 Settling group balance · Once paid, Lerato will be notified and your balance will be cleared automatically</div>
+          </div>
+
+          <div class="co-q">How would you like to pay?</div>
+
+          <!-- PAY WITH CARD -->
+          <div class="po" onclick="goSuccess('card')">
+            <div class="po-left">
+              <div class="po-icon-wrap"><svg width="20" height="14" viewBox="0 0 20 14"><rect width="20" height="14" rx="2" fill="#2A54C0"/><rect y="3" width="20" height="4" fill="#1A1F71"/></svg></div>
+              <div class="po-label">Pay with card</div>
+            </div>
+            <div class="po-badges">
+              <div class="badge-pill" style="background:#C8102E;color:white;">MC</div>
+              <div class="badge-pill" style="background:#1A1F71;color:white;">VISA</div>
+              <div class="badge-pill" style="background:#2671C9;color:white;">AMEX</div>
+              <div class="badge-pill" style="background:#000;color:white;">🍎</div>
+              <div class="badge-pill" style="background:#1A73E8;color:white;font-weight:800;">G</div>
+            </div>
+          </div>
+
+          <!-- PAY IN-APP -->
+          <div class="po" onclick="goSuccess('app')">
+            <div class="po-left">
+              <div class="po-icon-wrap"><svg width="16" height="20" viewBox="0 0 16 20"><rect width="16" height="20" rx="3" fill="#2A54C0"/><rect x="4" y="2" width="8" height="2" rx="1" fill="rgba(255,255,255,0.4)"/><rect x="2" y="6" width="12" height="11" rx="2" fill="rgba(255,255,255,0.15)"/></svg></div>
+              <div class="po-label">Pay in-app</div>
+            </div>
+            <div class="po-badges">
+              <div class="badge-pill" style="background:#FF6600;color:white;font-size:8px;">60|60</div>
+              <div class="badge-pill" style="background:#1DB954;color:white;font-size:10px;font-weight:800;">Z</div>
+              <div class="badge-pill" style="background:var(--orange-800);color:white;font-size:9px;">p@</div>
+            </div>
+          </div>
+
+          <!-- FNB -->
+          <div class="bank-row" onclick="goSuccess('fnb')">
+            <div class="bank-logo" style="background:transparent;"><img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='52' height='34' viewBox='0 0 52 34'%3E%3Crect width='52' height='34' rx='7' fill='%23F5F5F5'/%3E%3Ctext x='26' y='23' text-anchor='middle' font-family='Arial' font-weight='900' font-size='14' fill='%23009639'%3EFNB%3C/text%3E%3C/svg%3E" width="52" height="34" style="border-radius:7px;"></div>
+            <div class="bank-name" style="color:var(--green);font-weight:700;">FNB</div>
+            <div class="bank-sub">eBucks · RMB</div>
+          </div>
+
+          <!-- ABSA -->
+          <div class="bank-row" onclick="goSuccess('absa')">
+            <div class="bank-logo" style="background:#C8102E;font-size:11px;letter-spacing:0.5px;">absa</div>
+            <div class="bank-name">ABSA</div>
+          </div>
+
+          <!-- CAPITEC -->
+          <div class="bank-row" onclick="goSuccess('capitec')">
+            <div class="bank-logo" style="background:#004F9F;font-size:8px;line-height:1.2;">CAP<br>ITEC</div>
+            <div class="bank-name">Capitec</div>
+          </div>
+
+          <!-- NEDBANK -->
+          <div class="bank-row" onclick="goSuccess('nedbank')">
+            <div class="bank-logo" style="background:#007AC9;font-size:9px;">NED</div>
+            <div class="bank-name">Nedbank</div>
+          </div>
+
+          <!-- STANDARD BANK -->
+          <div class="bank-row" onclick="goSuccess('std')">
+            <div class="bank-logo" style="background:#0033A0;font-size:7px;line-height:1.2;text-align:center;padding:2px;">STD<br>BANK</div>
+            <div class="bank-name">Standard Bank</div>
+          </div>
+
+          <!-- PAY IN STORE -->
+          <div class="po" onclick="showToast('Show barcode at till')">
+            <div class="po-left">
+              <div class="po-icon-wrap"><svg width="20" height="16" viewBox="0 0 20 16"><rect x="0" y="0" width="2" height="16" fill="#2A54C0"/><rect x="4" y="0" width="1" height="16" fill="#2A54C0"/><rect x="7" y="0" width="3" height="16" fill="#2A54C0"/><rect x="12" y="0" width="2" height="16" fill="#2A54C0"/><rect x="16" y="0" width="1" height="16" fill="#2A54C0"/><rect x="18" y="0" width="2" height="16" fill="#2A54C0"/></svg></div>
+              <div class="po-label">Pay in store</div>
+            </div>
+            <div style="margin-left:auto;font-size:10px;color:var(--grey-600);">Barcode at till</div>
+          </div>
+
+          <!-- VOUCHERS -->
+          <div class="po" onclick="showToast('Enter voucher code')">
+            <div class="po-left">
+              <div class="po-icon-wrap"><svg width="20" height="14" viewBox="0 0 20 14"><rect width="20" height="14" rx="3" fill="#E1E2E5"/><circle cx="5" cy="7" r="3" fill="white"/><circle cx="15" cy="7" r="3" fill="white"/><rect x="5" y="5" width="10" height="4" fill="#E1E2E5"/><text x="10" y="10" text-anchor="middle" font-size="5" fill="#676C7D" font-weight="700">VOUCHER</text></svg></div>
+              <div class="po-label">Vouchers</div>
+            </div>
+          </div>
+
+          <!-- EFT -->
+          <div class="po" onclick="goSuccess('eft')">
+            <div class="po-left">
+              <div class="po-icon-wrap"><svg width="20" height="14" viewBox="0 0 20 14"><rect width="20" height="14" rx="2" fill="#5433FF"/><text x="10" y="10" text-anchor="middle" font-size="7" fill="white" font-weight="800">EFT</text></svg></div>
+              <div class="po-label" style="font-size:9px;">Pay with EFT</div>
+            </div>
+            <div class="po-badges"><div class="badge-pill" style="background:#5433FF;color:white;font-size:8px;">Ozow</div></div>
+          </div>
+
+          <!-- PAYSHAP -->
+          <div class="po" onclick="goSuccess('payshap')">
+            <div class="po-left">
+              <div class="po-icon-wrap"><svg width="20" height="14" viewBox="0 0 20 14"><rect width="20" height="14" rx="2" fill="#E31837"/><text x="10" y="10" text-anchor="middle" font-size="8" fill="white" font-weight="800">PS</text></svg></div>
+              <div class="po-label">PayShap</div>
+            </div>
+            <div style="margin-left:auto;font-size:10px;color:var(--grey-600);">Instant · Any SA bank</div>
+          </div>
+
+          <!-- QR SECTION -->
+          <div style="padding:10px 18px 0;">
+            <div style="font-size:11px;font-weight:600;color:var(--navy);margin-bottom:8px;">Or scan to pay</div>
+          </div>
+          <div class="qr-section">
+            <div class="qr-box">
+              <svg width="84" height="84" viewBox="0 0 84 84">
+                <rect x="2" y="2" width="24" height="24" rx="2" fill="none" stroke="#001752" stroke-width="2.5"/>
+                <rect x="7" y="7" width="14" height="14" rx="1" fill="#001752"/>
+                <rect x="58" y="2" width="24" height="24" rx="2" fill="none" stroke="#001752" stroke-width="2.5"/>
+                <rect x="63" y="7" width="14" height="14" rx="1" fill="#001752"/>
+                <rect x="2" y="58" width="24" height="24" rx="2" fill="none" stroke="#001752" stroke-width="2.5"/>
+                <rect x="7" y="63" width="14" height="14" rx="1" fill="#001752"/>
+                <rect x="32" y="2" width="7" height="7" fill="#001752"/><rect x="43" y="2" width="7" height="7" fill="#001752"/>
+                <rect x="32" y="13" width="7" height="7" fill="#001752"/><rect x="43" y="13" width="7" height="7" fill="#001752"/>
+                <rect x="2" y="32" width="7" height="7" fill="#001752"/><rect x="13" y="32" width="7" height="7" fill="#001752"/><rect x="32" y="32" width="7" height="7" fill="#001752"/><rect x="54" y="32" width="7" height="7" fill="#001752"/><rect x="65" y="32" width="7" height="7" fill="#001752"/><rect x="75" y="32" width="7" height="7" fill="#001752"/>
+                <rect x="2" y="43" width="7" height="7" fill="#001752"/><rect x="24" y="43" width="7" height="7" fill="#001752"/><rect x="43" y="43" width="7" height="7" fill="#001752"/><rect x="75" y="43" width="7" height="7" fill="#001752"/>
+                <rect x="13" y="54" width="7" height="7" fill="#001752"/><rect x="32" y="54" width="7" height="7" fill="#001752"/><rect x="54" y="54" width="7" height="7" fill="#001752"/>
+                <rect x="32" y="65" width="7" height="7" fill="#001752"/><rect x="43" y="65" width="7" height="7" fill="#001752"/><rect x="75" y="65" width="7" height="7" fill="#001752"/>
+                <rect x="32" y="75" width="7" height="7" fill="#001752"/><rect x="54" y="75" width="7" height="7" fill="#001752"/><rect x="65" y="75" width="7" height="7" fill="#001752"/>
+                <rect x="36" y="36" width="12" height="12" rx="3" fill="#FF5417"/>
+                <text x="42" y="45" text-anchor="middle" font-family="Poppins" font-weight="700" font-size="7" fill="white">p@</text>
+              </svg>
+            </div>
+            <div class="qr-title">Scan this QR code to pay</div>
+            <div class="qr-sub">Use SnapScan, PayShap or any Pay@-enabled app to pay instantly</div>
+          </div>
+
+          <div class="co-footer">Powered by <span>pay@</span> · 19 years of trusted payment heritage · All transactions encrypted & secured</div>
+          <div style="height:20px;"></div>
+        </div>
+      </div>
+
+      <!-- ═══════ NOTIFICATIONS ═══════ -->
+      <div class="screen" id="notifications">
+        <div class="status-bar" style="background:var(--surface);"><span class="st-time">9:41</span><div class="st-icons"><span>●●●</span><span>🔋</span></div></div>
+        <div class="app-header"><div style="flex:1;"><div class="bh-title" style="font-family:'Poppins',sans-serif;font-size:15px;font-weight:600;color:white;">Notifications</div></div><div class="av">TM</div></div>
+        <div class="sc" style="height:calc(100% - 46px - 68px);">
+          <div class="notif-item urgent" onclick="showScreen('settle')">
+            <div class="ni-h"><div class="ni-ic" style="background:rgba(255,84,23,0.12);">🔒</div><div><div class="ni-title">Cape Town Trip — closed</div><div class="ni-time">Just now</div></div></div>
+            <div class="ni-body">Your group has been closed by Lerato. You owe <strong style="color:white;">R 320.00.</strong> Tap to pay now via Pay@.</div>
+            <div class="ni-acts">
+              <div class="ni-act" style="background:var(--orange-800);color:white;" onclick="event.stopPropagation();openSettleCheckout()">PAY R 320 →</div>
+              <div class="ni-act" style="background:rgba(255,84,23,0.1);color:var(--orange-800);" onclick="event.stopPropagation();showScreen('qr-scan')">⬛ QR SCAN</div>
+            </div>
+          </div>
+          <div class="notif-item payshap" onclick="showScreen('payat-checkout')">
+            <div class="ni-h"><div class="ni-ic" style="background:rgba(227,24,55,0.12);">⚡</div><div><div class="ni-title">PayShap Request received</div><div class="ni-time">2 min ago</div></div></div>
+            <div class="ni-body">Sipho sent a PayShap Request for <strong style="color:white;">R 97.00</strong> — Karibu Restaurant. Approve in your banking app or pay directly via GroupPay.</div>
+            <div class="ni-acts">
+              <div class="ni-act" style="background:#E31837;color:white;" onclick="event.stopPropagation();showScreen('payat-checkout')">APPROVE VIA PAY@</div>
+            </div>
+          </div>
+          <div class="notif-item" onclick="showScreen('group-detail')">
+            <div class="ni-h"><div class="ni-ic" style="background:rgba(245,158,11,0.12);">🍷</div><div><div class="ni-title">New expense added</div><div class="ni-time">1 hr ago</div></div></div>
+            <div class="ni-body">Lerato added "Karibu Restaurant — R 1,240" to Cape Town Trip. Your share: R 248. Approve or dispute below.</div>
+            <div class="ni-acts">
+              <div class="ni-act" style="background:rgba(22,163,74,0.12);color:var(--green);" onclick="showToast('✓ Expense approved')">APPROVE</div>
+              <div class="ni-act" style="background:rgba(220,38,38,0.1);color:var(--red);" onclick="showToast('Flagged for review')">DISPUTE</div>
+            </div>
+          </div>
+          <div class="notif-item">
+            <div class="ni-h"><div class="ni-ic" style="background:rgba(255,102,0,0.12);">🛒</div><div><div class="ni-title">60|60 order auto-logged</div><div class="ni-time">3 hrs ago</div></div></div>
+            <div class="ni-body">Your 60|60 order of R 485 was paid via Pay@ and automatically added to Cape Town Trip. Each member owes R 97.</div>
+          </div>
+          <div style="height:10px;"></div>
+        </div>
+        <div class="bottom-nav">
+          <div class="nav-item" onclick="showScreen('home')"><div class="ni">🏠</div><div class="nl">Home</div></div>
+          <div class="nav-item" onclick="showScreen('group-detail')"><div class="ni">👥</div><div class="nl">Groups</div></div>
+          <div class="nav-item" onclick="showScreen('qr-scan')"><div class="ni">⬛</div><div class="nl">QR Pay</div></div>
+          <div class="nav-item active"><div class="ni">🔔</div><div class="nl">Alerts</div></div>
+          <div class="nav-item" onclick="showScreen('dashboard')"><div class="ni">📊</div><div class="nl">Insights</div></div>
+        </div>
+      </div>
+
+      <!-- ═══════ ADD SPEND ═══════ -->
+      <div class="screen" id="add-spend">
+        <div class="status-bar" style="background:var(--surface);"><span class="st-time">9:41</span><div class="st-icons"><span>●●●</span><span>🔋</span></div></div>
+        <div class="back-header"><div class="back-btn" onclick="showScreen('group-detail')">←</div><div><div class="bh-title">Add expense</div><div class="bh-sub">Cape Town Trip</div></div></div>
+        <div class="sc" style="height:calc(100% - 46px - 68px);">
+          <div class="scan-zone" onclick="simulateScan()">
+            <div style="font-size:30px;" id="scanIcon">📷</div>
+            <div style="font-family:'Poppins',sans-serif;font-size:13px;font-weight:600;color:white;" id="scanTitle">Scan receipt</div>
+            <div style="font-size:10px;color:var(--grey-600);text-align:center;font-weight:400;" id="scanSub">AI extracts shop, date, items & amounts automatically</div>
+          </div>
+          <div class="form-grp"><label class="form-lbl">Merchant / Title</label><input class="form-inp" type="text" id="merchant" placeholder="e.g. Woolworths, Uber, Karibu…"></div>
+          <div class="form-grp"><label class="form-lbl">Amount (ZAR)</label><input class="form-inp" type="text" id="amount" placeholder="R 0.00"></div>
+          <div class="form-grp"><label class="form-lbl">Category</label><select class="form-inp" style="appearance:none;"><option>🍔 Food & drink</option><option>🚕 Transport</option><option>🏨 Accommodation</option><option>🎉 Entertainment</option><option>🛒 Groceries</option></select></div>
+          <div style="padding:0 18px;margin-bottom:7px;"><label class="form-lbl">Split method</label></div>
+          <div class="split-row">
+            <button class="split-opt active">Equally</button>
+            <button class="split-opt" onclick="toggleSplit(this)">By amount</button>
+            <button class="split-opt" onclick="toggleSplit(this)">By %</button>
+            <button class="split-opt" onclick="toggleSplit(this)">Custom</button>
+          </div>
+          <div class="form-grp"><label class="form-lbl">Approval</label><select class="form-inp" style="appearance:none;"><option>Auto-approve</option><option>Group approval</option><option>Admin only</option></select></div>
+          <div style="padding:0 18px;">
+            <button class="btn btn-orange btn-block" onclick="showToast('✓ Added & group notified via WhatsApp + app')">ADD TO GROUP</button>
+          </div>
+          <div style="height:10px;"></div>
+        </div>
+        <div class="bottom-nav">
+          <div class="nav-item" onclick="showScreen('home')"><div class="ni">🏠</div><div class="nl">Home</div></div>
+          <div class="nav-item" onclick="showScreen('group-detail')"><div class="ni">👥</div><div class="nl">Groups</div></div>
+          <div class="nav-item active"><div class="ni">📷</div><div class="nl">Scan</div></div>
+          <div class="nav-item" onclick="showScreen('notifications')"><div class="ni">🔔</div><div class="nl">Alerts</div></div>
+          <div class="nav-item" onclick="showScreen('dashboard')"><div class="ni">📊</div><div class="nl">Insights</div></div>
+        </div>
+      </div>
+
+      <!-- ═══════ DASHBOARD ═══════ -->
+      <div class="screen" id="dashboard">
+        <div class="status-bar" style="background:var(--surface);"><span class="st-time">9:41</span><div class="st-icons"><span>●●●</span><span>🔋</span></div></div>
+        <div class="app-header"><div style="flex:1;"><div class="bh-title" style="font-family:'Poppins',sans-serif;font-size:15px;font-weight:600;color:white;">Spending insights</div><div class="bh-sub">All groups · April 2025</div></div><div class="av">TM</div></div>
+        <div class="sc" style="height:calc(100% - 46px - 68px);">
+          <div class="period-row">
+            <button class="period-chip">Week</button>
+            <button class="period-chip active">Month</button>
+            <button class="period-chip">Quarter</button>
+            <button class="period-chip">Year</button>
+          </div>
+          <div style="display:flex;gap:6px;padding:0 18px;margin-bottom:12px;">
+            <div style="flex:1;background:rgba(255,84,23,0.09);border:1px solid rgba(255,84,23,0.2);border-radius:13px;padding:12px;"><div style="font-size:9px;color:var(--grey-600);font-weight:400;">Total spent</div><div style="font-family:'Poppins',sans-serif;font-size:19px;font-weight:700;color:white;">R 5,840</div><div style="font-size:9px;color:var(--grey-600);margin-top:1px;font-weight:400;">3 groups</div></div>
+            <div style="flex:1;background:rgba(13,148,136,0.09);border:1px solid rgba(13,148,136,0.2);border-radius:13px;padding:12px;"><div style="font-size:9px;color:var(--grey-600);font-weight:400;">Via Pay@</div><div style="font-family:'Poppins',sans-serif;font-size:19px;font-weight:700;color:white;">R 4,210</div><div style="font-size:9px;color:var(--green);margin-top:1px;font-weight:500;">72% of spend</div></div>
+          </div>
+          <div style="margin:0 18px 12px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:13px;padding:13px;">
+            <div style="font-size:9px;color:var(--grey-600);margin-bottom:9px;font-weight:600;letter-spacing:1px;">DAILY SPEND — APRIL</div>
+            <div style="display:flex;align-items:flex-end;gap:5px;height:65px;">
+              <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;height:100%;justify-content:flex-end;"><div style="width:100%;background:rgba(255,84,23,0.35);border-radius:3px 3px 0 0;height:30%;"></div><div style="font-size:8px;color:var(--grey-600);">1</div></div>
+              <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;height:100%;justify-content:flex-end;"><div style="width:100%;background:rgba(255,84,23,0.5);border-radius:3px 3px 0 0;height:55%;"></div><div style="font-size:8px;color:var(--grey-600);">5</div></div>
+              <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;height:100%;justify-content:flex-end;"><div style="width:100%;background:rgba(255,84,23,0.35);border-radius:3px 3px 0 0;height:20%;"></div><div style="font-size:8px;color:var(--grey-600);">8</div></div>
+              <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;height:100%;justify-content:flex-end;"><div style="width:100%;background:var(--orange-800);border-radius:3px 3px 0 0;height:100%;"></div><div style="font-size:8px;color:var(--grey-600);">11</div></div>
+              <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;height:100%;justify-content:flex-end;"><div style="width:100%;background:rgba(255,84,23,0.5);border-radius:3px 3px 0 0;height:45%;"></div><div style="font-size:8px;color:var(--grey-600);">14</div></div>
+              <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;height:100%;justify-content:flex-end;"><div style="width:100%;background:rgba(255,84,23,0.6);border-radius:3px 3px 0 0;height:65%;"></div><div style="font-size:8px;color:var(--grey-600);">17</div></div>
+              <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;height:100%;justify-content:flex-end;"><div style="width:100%;background:var(--orange-800);border-radius:3px 3px 0 0;height:80%;"></div><div style="font-size:8px;color:var(--grey-600);">20</div></div>
+              <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;height:100%;justify-content:flex-end;"><div style="width:100%;background:rgba(255,84,23,0.35);border-radius:3px 3px 0 0;height:35%;"></div><div style="font-size:8px;color:var(--grey-600);">23</div></div>
+            </div>
+          </div>
+          <div class="sec-title" style="margin-bottom:9px;">Top categories</div>
+          <div style="padding:0 18px;display:flex;flex-direction:column;gap:9px;">
+            <div style="display:flex;align-items:center;gap:9px;"><div style="width:32px;height:32px;background:rgba(255,84,23,0.1);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;">🍔</div><div style="flex:1;"><div style="font-size:11px;color:white;font-weight:500;">Food & drink</div><div style="height:3px;background:rgba(255,255,255,0.07);border-radius:2px;margin-top:4px;"><div style="width:78%;height:3px;background:var(--orange-800);border-radius:2px;"></div></div></div><div style="font-family:'Poppins',sans-serif;font-size:12px;font-weight:700;color:white;">R 2,280</div></div>
+            <div style="display:flex;align-items:center;gap:9px;"><div style="width:32px;height:32px;background:rgba(13,148,136,0.1);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;">🚕</div><div style="flex:1;"><div style="font-size:11px;color:white;font-weight:500;">Transport</div><div style="height:3px;background:rgba(255,255,255,0.07);border-radius:2px;margin-top:4px;"><div style="width:52%;height:3px;background:var(--teal);border-radius:2px;"></div></div></div><div style="font-family:'Poppins',sans-serif;font-size:12px;font-weight:700;color:white;">R 1,520</div></div>
+            <div style="display:flex;align-items:center;gap:9px;"><div style="width:32px;height:32px;background:rgba(15,50,140,0.2);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;">🏨</div><div style="flex:1;"><div style="font-size:11px;color:white;font-weight:500;">Accommodation</div><div style="height:3px;background:rgba(255,255,255,0.07);border-radius:2px;margin-top:4px;"><div style="width:65%;height:3px;background:var(--blue-600);border-radius:2px;"></div></div></div><div style="font-family:'Poppins',sans-serif;font-size:12px;font-weight:700;color:white;">R 1,905</div></div>
+          </div>
+          <div style="height:10px;"></div>
+        </div>
+        <div class="bottom-nav">
+          <div class="nav-item" onclick="showScreen('home')"><div class="ni">🏠</div><div class="nl">Home</div></div>
+          <div class="nav-item" onclick="showScreen('group-detail')"><div class="ni">👥</div><div class="nl">Groups</div></div>
+          <div class="nav-item" onclick="showScreen('qr-scan')"><div class="ni">⬛</div><div class="nl">QR Pay</div></div>
+          <div class="nav-item" onclick="showScreen('notifications')"><div class="ni">🔔</div><div class="nl">Alerts</div></div>
+          <div class="nav-item active"><div class="ni">📊</div><div class="nl">Insights</div></div>
+        </div>
+      </div>
+
+      <!-- ═══════ SUCCESS ═══════ -->
+      <div class="screen" id="success">
+        <div class="status-bar" style="position:absolute;top:0;left:0;right:0;background:transparent;"><span class="st-time">9:41</span><div class="st-icons"><span>●●●</span><span>🔋</span></div></div>
+        <div style="height:100%;display:flex;align-items:center;justify-content:center;padding-top:46px;">
+          <div class="succ-wrap">
+            <div class="succ-anim">✓</div>
+            <div class="succ-title" id="s-title">Payment sent!</div>
+            <div class="succ-sub" id="s-sub">Your settlement has been processed via Pay@ and your group balance is now cleared.</div>
+            <div class="succ-card">
+              <div class="sd-row"><span class="sd-k">Amount</span><span class="sd-v" id="s-amt">R 320.00</span></div>
+              <div class="sd-row"><span class="sd-k">To</span><span class="sd-v" id="s-to">Lerato Nkosi</span></div>
+              <div class="sd-row"><span class="sd-k">Method</span><span class="sd-v" id="s-method">Capitec Pay</span></div>
+              <div class="sd-row"><span class="sd-k">Group</span><span class="sd-v">Cape Town Trip</span></div>
+              <div class="sd-row"><span class="sd-k">Processed by</span><span class="sd-v" style="color:var(--orange-800);">pay@</span></div>
+              <div class="sd-row"><span class="sd-k">Status</span><span class="sd-v" style="color:var(--green);">✓ Confirmed</span></div>
+            </div>
+            <div class="succ-note">📱 Lerato notified via WhatsApp & SMS · Balance cleared in group</div>
+            <button class="btn btn-orange btn-block" onclick="showScreen('home')">BACK TO HOME</button>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- end phone -->
+
+    <!-- nav dots -->
+    <div class="nav-dots">
+      <div class="nav-dot active" onclick="showScreen('home')" title="Home"></div>
+      <div class="nav-dot" onclick="showScreen('notifications')" title="Notifications"></div>
+      <div class="nav-dot" onclick="showScreen('group-detail')" title="Group Detail"></div>
+      <div class="nav-dot" onclick="showScreen('qr-scan')" title="QR Pay"></div>
+      <div class="nav-dot" onclick="showScreen('partner-order')" title="60|60 Order"></div>
+      <div class="nav-dot" onclick="showScreen('payat-checkout')" title="Pay@ Checkout"></div>
+      <div class="nav-dot" onclick="showScreen('add-spend')" title="Add Spend"></div>
+      <div class="nav-dot" onclick="showScreen('dashboard')" title="Dashboard"></div>
+      <div class="nav-dot" onclick="showScreen('success')" title="Success"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const screens = ['home','notifications','group-detail','qr-scan','partner-order','payat-checkout','add-spend','dashboard','success'];
+  let isOrderContext = false;
+
+  function showScreen(id) {
+    screens.forEach(s => document.getElementById(s).classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    document.querySelectorAll('.nav-dot').forEach((d,i) => d.classList.toggle('active', screens[i] === id));
+  }
+
+  function selectMoment(n) {
+    document.querySelectorAll('.moment-card').forEach((m,i) => m.classList.toggle('active', i===n-1));
+    if(n===1) showScreen('notifications');
+    if(n===2) showScreen('partner-order');
+    if(n===3) showScreen('qr-scan');
+  }
+
+  function openSettleCheckout() {
+    isOrderContext = false;
+    document.getElementById('co-merchant').textContent = 'Cape Town Trip · Lerato Nkosi';
+    document.getElementById('co-amount').textContent = 'R 320.00';
+    const note = document.getElementById('co-note');
+    note.style.display = 'block';
+    note.textContent = '🧾 Settling group balance · Once paid, Lerato will be notified and your balance will be cleared automatically';
+    showScreen('payat-checkout');
+  }
+
+  function open60Order() {
+    isOrderContext = true;
+    document.getElementById('co-merchant').textContent = '60|60 by Checkers · Cape Town Trip';
+    document.getElementById('co-amount').textContent = 'R 485.00';
+    const note = document.getElementById('co-note');
+    note.style.display = 'block';
+    note.textContent = '🧾 Group order · R 97 per person · Will be auto-logged as group expense once paid';
+    showScreen('payat-checkout');
+  }
+
+  function goSuccess(method) {
+    const map = { card:'Credit/Debit Card', app:'Pay In-App', fnb:'FNB eBucks', absa:'ABSA Pay', capitec:'Capitec Pay', nedbank:'Nedbank Pay', std:'Standard Bank', eft:'Ozow EFT', payshap:'PayShap', snap:'SnapScan' };
+    document.getElementById('s-method').textContent = map[method] || 'Pay@';
+    if(isOrderContext) {
+      document.getElementById('s-title').textContent = 'Order placed!';
+      document.getElementById('s-sub').textContent = '60|60 order confirmed. Auto-logged as group expense — R 97 per person. ETA: 60 minutes.';
+      document.getElementById('s-amt').textContent = 'R 485.00';
+      document.getElementById('s-to').textContent = '60|60 by Checkers';
+    } else {
+      document.getElementById('s-title').textContent = 'Payment sent!';
+      document.getElementById('s-sub').textContent = 'Your settlement has been processed via Pay@ and your group balance is now cleared.';
+      document.getElementById('s-amt').textContent = 'R 320.00';
+      document.getElementById('s-to').textContent = 'Lerato Nkosi';
+    }
+    showScreen('success');
+  }
+
+  // QR scan simulation
+  let qrMode = 'scan';
+  let qrScanned = false;
+  function setQrMode(mode) {
+    qrMode = mode;
+    qrScanned = false;
+    document.getElementById('mode-scan').style.background = mode==='scan' ? 'var(--orange-800)' : 'rgba(255,255,255,0.15)';
+    document.getElementById('mode-show').style.background = mode==='show' ? 'var(--orange-800)' : 'rgba(255,255,255,0.15)';
+    document.getElementById('scan-result').style.display = 'none';
+    document.getElementById('my-qr-panel').style.display = mode==='show' ? 'block' : 'none';
+    document.getElementById('qr-hint').textContent = mode==='scan' ? 'Tap anywhere in viewfinder to simulate a scan' : 'Members scan this QR to pay their share';
+  }
+
+  function simulateQrScan() {
+    if(qrMode === 'show') return;
+    if(qrScanned) {
+      showScreen('payat-checkout');
+      isOrderContext = false;
+      document.getElementById('co-merchant').textContent = 'Karibu Restaurant · Table 4';
+      document.getElementById('co-amount').textContent = 'R 248.00';
+      const note = document.getElementById('co-note');
+      note.style.display='block';
+      note.textContent='🧾 QR scan · Will be auto-logged as Cape Town Trip expense · Your share: R 248';
+      return;
+    }
+    qrScanned = true;
+    document.getElementById('scan-result').style.display = 'block';
+    document.getElementById('qr-hint').textContent = 'Tap card to open Pay@ checkout';
+    showToast('✓ QR code detected — Karibu Restaurant');
+  }
+
+  // Add spend scan sim
+  let scanDone = false;
+  function simulateScan() {
+    if(scanDone) return;
+    document.getElementById('scanIcon').textContent = '⏳';
+    document.getElementById('scanTitle').textContent = 'Scanning…';
+    document.getElementById('scanSub').textContent = 'AI reading receipt…';
+    setTimeout(() => {
+      document.getElementById('scanIcon').textContent = '✅';
+      document.getElementById('scanTitle').textContent = 'Receipt scanned!';
+      document.getElementById('scanSub').textContent = '4 items extracted automatically';
+      document.getElementById('merchant').value = 'Woolworths Food — V&A Waterfront';
+      document.getElementById('amount').value = 'R 342.50';
+      scanDone = true;
+      showToast('✓ 4 items extracted from receipt');
+    }, 1400);
+  }
+
+  function toggleSplit(el) {
+    document.querySelectorAll('.split-opt').forEach(b => b.classList.remove('active'));
+    el.classList.add('active');
+  }
+
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 3000);
+  }
+</script>
+</body>
+</html>
