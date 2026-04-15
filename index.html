@@ -33,13 +33,18 @@
 
   body {
     font-family:'Poppins',sans-serif;
-    background:var(--bg-dark);
-    display:flex; justify-content:center; align-items:center;
-    min-height:100vh; padding:20px;
+    background:var(--surface);
+    margin:0; padding:0;
+    min-height:100vh;
+    overflow:hidden;
   }
 
   /* ── SCENE ── */
-  .scene { display:flex; gap:40px; align-items:flex-start; max-width:1160px; width:100%; }
+  .scene { display:block; width:100%; height:100vh; }
+  @media(min-width:700px){
+    body { display:flex; justify-content:center; align-items:center; background:var(--bg-dark); padding:20px; }
+    .scene { display:flex; gap:40px; align-items:flex-start; max-width:1160px; height:auto; }
+  }
 
   /* ── BRAND PANEL ── */
   .brand-panel { flex:1; color:white; padding:20px 0; display:flex; flex-direction:column; gap:24px; }
@@ -73,15 +78,26 @@
   .p-icon { width:20px; height:20px; border-radius:4px; display:flex; align-items:center; justify-content:center; font-size:9px; font-weight:800; flex-shrink:0; }
 
   /* ── PHONE ── */
-  .phone-wrap { position:relative; flex-shrink:0; }
+  .phone-wrap { position:relative; flex-shrink:0; width:100%; height:100vh; }
+  @media(min-width:700px){ .phone-wrap { width:auto; height:auto; } }
   .phone {
-    width:375px; height:812px;
+    width:100vw; height:100vh;
     background:var(--surface);
-    border-radius:46px; border:8px solid #2D3748;
+    border-radius:0; border:none;
     overflow:hidden; position:relative;
-    box-shadow: 0 0 0 1px rgba(255,255,255,0.05), 0 40px 80px rgba(0,0,0,0.7), 0 0 80px rgba(255,84,23,0.1);
+    box-shadow:none;
   }
-  .phone::before { content:''; position:absolute; top:0; left:50%; transform:translateX(-50%); width:120px; height:32px; background:#2D3748; border-radius:0 0 22px 22px; z-index:100; }
+  @media(min-width:700px){
+    .phone {
+      width:375px; height:812px;
+      border-radius:46px; border:8px solid #2D3748;
+      box-shadow: 0 0 0 1px rgba(255,255,255,0.05), 0 40px 80px rgba(0,0,0,0.7), 0 0 80px rgba(255,84,23,0.1);
+    }
+  }
+  .phone::before { display:none; }
+  @media(min-width:700px){
+    .phone::before { display:block; content:''; position:absolute; top:0; left:50%; transform:translateX(-50%); width:120px; height:32px; background:#2D3748; border-radius:0 0 22px 22px; z-index:100; }
+  }
 
   .screen { position:absolute; inset:0; overflow:hidden; opacity:0; pointer-events:none; transition:opacity 0.3s ease; }
   .screen.active { opacity:1; pointer-events:all; }
@@ -311,30 +327,15 @@
   .toast.show { transform:translateX(-50%) translateY(0); }
 
   /* ── NAV DOTS ── */
-  .nav-dots { display:flex; flex-direction:column; gap:7px; position:absolute; right:-26px; top:50%; transform:translateY(-50%); }
+  .nav-dots { display:none; }
+  @media(min-width:700px){
+    .nav-dots { display:flex; flex-direction:column; gap:7px; position:absolute; right:-26px; top:50%; transform:translateY(-50%); }
+  }
   .nav-dot { width:7px; height:7px; border-radius:50%; background:rgba(255,255,255,0.2); cursor:pointer; transition:all 0.2s; }
   .nav-dot.active { background:var(--orange-800); transform:scale(1.35); }
-
-  @media(max-width:800px){.brand-panel{display:none;}.scene{justify-content:center;}}
+  .brand-panel { display:none; }
+  @media(min-width:700px){ .brand-panel { display:flex; } .scene { justify-content:center; } }
 </style>
-
-  <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#FF5417">
-  <meta name="mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="GroupPay">
-  <link rel="apple-touch-icon" href="icons/icon-192.png">
-  <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
-  <script>
-    if ("serviceWorker" in navigator) {
-      window.addEventListener("load", () => {
-        navigator.serviceWorker.register("sw.js")
-          .then(r => console.log("SW registered"))
-          .catch(e => console.log("SW error", e));
-      });
-    }
-  </script>
 </head>
 <body>
 <div class="toast" id="toast">Done</div>
@@ -405,7 +406,7 @@
       <!-- ═══════ HOME ═══════ -->
       <div class="screen active" id="home">
         <div class="status-bar" style="background:var(--surface);">
-          <span class="st-time">9:41</span>
+          <span class="st-time" id="st-time-{i}">9:41</span>
           <div class="st-icons"><span>●●●</span><span>🔋</span></div>
         </div>
         <div class="app-header">
@@ -466,7 +467,7 @@
 
       <!-- ═══════ GROUP DETAIL ═══════ -->
       <div class="screen" id="group-detail">
-        <div class="status-bar" style="background:var(--surface);"><span class="st-time">9:41</span><div class="st-icons"><span>●●●</span><span>🔋</span></div></div>
+        <div class="status-bar" style="background:var(--surface);"><span class="st-time" id="st-time-{i}">9:41</span><div class="st-icons"><span>●●●</span><span>🔋</span></div></div>
         <div class="back-header"><div class="back-btn" onclick="showScreen('home')">←</div><div><div class="bh-title">✈️ Cape Town Trip</div><div class="bh-sub">Closed · R 4,250 total</div></div><div style="margin-left:auto;font-size:15px;cursor:pointer;" onclick="showToast('Group settings')">⚙️</div></div>
         <div class="sc" style="height:calc(100% - 46px - 68px);">
           <div class="hero-card" style="background:linear-gradient(135deg,#1E3A5F,var(--surface-2));border:1px solid rgba(255,255,255,0.07);">
@@ -509,7 +510,7 @@
 
       <!-- ═══════ QR SCAN SCREEN ═══════ -->
       <div class="screen" id="qr-scan">
-        <div class="status-bar" style="background:transparent;position:absolute;z-index:20;"><span class="st-time">9:41</span><div class="st-icons"><span>●●●</span><span>🔋</span></div></div>
+        <div class="status-bar" style="background:transparent;position:absolute;z-index:20;"><span class="st-time" id="st-time-{i}">9:41</span><div class="st-icons"><span>●●●</span><span>🔋</span></div></div>
         <div class="qr-viewfinder">
           <div class="qr-overlay"></div>
           <!-- Back btn -->
@@ -587,7 +588,7 @@
 
       <!-- ═══════ PARTNER ORDER ═══════ -->
       <div class="screen" id="partner-order">
-        <div class="status-bar" style="background:var(--surface);"><span class="st-time">9:41</span><div class="st-icons"><span>●●●</span><span>🔋</span></div></div>
+        <div class="status-bar" style="background:var(--surface);"><span class="st-time" id="st-time-{i}">9:41</span><div class="st-icons"><span>●●●</span><span>🔋</span></div></div>
         <div class="back-header"><div class="back-btn" onclick="showScreen('home')">←</div><div><div class="bh-title">Partner Order</div><div class="bh-sub">Cape Town Trip · Order for group</div></div></div>
         <div class="sc" style="height:calc(100% - 46px - 68px);">
           <div class="partner-hero"><div class="p-logo-big">60|60</div><div><div class="ph-name">60|60 by Checkers</div><div class="ph-sub">60-minute delivery · Waterfront area</div></div></div>
@@ -759,7 +760,7 @@
 
       <!-- ═══════ NOTIFICATIONS ═══════ -->
       <div class="screen" id="notifications">
-        <div class="status-bar" style="background:var(--surface);"><span class="st-time">9:41</span><div class="st-icons"><span>●●●</span><span>🔋</span></div></div>
+        <div class="status-bar" style="background:var(--surface);"><span class="st-time" id="st-time-{i}">9:41</span><div class="st-icons"><span>●●●</span><span>🔋</span></div></div>
         <div class="app-header"><div style="flex:1;"><div class="bh-title" style="font-family:'Poppins',sans-serif;font-size:15px;font-weight:600;color:white;">Notifications</div></div><div class="av">TM</div></div>
         <div class="sc" style="height:calc(100% - 46px - 68px);">
           <div class="notif-item urgent" onclick="showScreen('settle')">
@@ -802,7 +803,7 @@
 
       <!-- ═══════ ADD SPEND ═══════ -->
       <div class="screen" id="add-spend">
-        <div class="status-bar" style="background:var(--surface);"><span class="st-time">9:41</span><div class="st-icons"><span>●●●</span><span>🔋</span></div></div>
+        <div class="status-bar" style="background:var(--surface);"><span class="st-time" id="st-time-{i}">9:41</span><div class="st-icons"><span>●●●</span><span>🔋</span></div></div>
         <div class="back-header"><div class="back-btn" onclick="showScreen('group-detail')">←</div><div><div class="bh-title">Add expense</div><div class="bh-sub">Cape Town Trip</div></div></div>
         <div class="sc" style="height:calc(100% - 46px - 68px);">
           <div class="scan-zone" onclick="simulateScan()">
@@ -837,7 +838,7 @@
 
       <!-- ═══════ DASHBOARD ═══════ -->
       <div class="screen" id="dashboard">
-        <div class="status-bar" style="background:var(--surface);"><span class="st-time">9:41</span><div class="st-icons"><span>●●●</span><span>🔋</span></div></div>
+        <div class="status-bar" style="background:var(--surface);"><span class="st-time" id="st-time-{i}">9:41</span><div class="st-icons"><span>●●●</span><span>🔋</span></div></div>
         <div class="app-header"><div style="flex:1;"><div class="bh-title" style="font-family:'Poppins',sans-serif;font-size:15px;font-weight:600;color:white;">Spending insights</div><div class="bh-sub">All groups · April 2025</div></div><div class="av">TM</div></div>
         <div class="sc" style="height:calc(100% - 46px - 68px);">
           <div class="period-row">
@@ -882,7 +883,7 @@
 
       <!-- ═══════ SUCCESS ═══════ -->
       <div class="screen" id="success">
-        <div class="status-bar" style="position:absolute;top:0;left:0;right:0;background:transparent;"><span class="st-time">9:41</span><div class="st-icons"><span>●●●</span><span>🔋</span></div></div>
+        <div class="status-bar" style="position:absolute;top:0;left:0;right:0;background:transparent;"><span class="st-time" id="st-time-{i}">9:41</span><div class="st-icons"><span>●●●</span><span>🔋</span></div></div>
         <div style="height:100%;display:flex;align-items:center;justify-content:center;padding-top:46px;">
           <div class="succ-wrap">
             <div class="succ-anim">✓</div>
@@ -920,6 +921,33 @@
 </div>
 
 <script>
+  // Update clock
+  function updateTime(){
+    const now = new Date();
+    const h = now.getHours().toString().padStart(2,'0');
+    const m = now.getMinutes().toString().padStart(2,'0');
+    const t = h+':'+m;
+    document.querySelectorAll('.st-time').forEach(el => el.textContent = t);
+  }
+  updateTime();
+  setInterval(updateTime, 30000);
+
+  // On mobile fix scroll heights dynamically
+  function fixHeights(){
+    const isMobile = window.innerWidth < 700;
+    if(!isMobile) return;
+    const vh = window.innerHeight;
+    // status bar ~46px, bottom nav ~68px
+    const scrollH = vh - 46 - 68;
+    document.querySelectorAll('.sc').forEach(el => {
+      if(el.style.height && el.style.height.includes('calc')) {
+        el.style.height = scrollH + 'px';
+      }
+    });
+  }
+  window.addEventListener('resize', fixHeights);
+  window.addEventListener('load', fixHeights);
+
   const screens = ['home','notifications','group-detail','qr-scan','partner-order','payat-checkout','add-spend','dashboard','success'];
   let isOrderContext = false;
 
