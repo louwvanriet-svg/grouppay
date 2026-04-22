@@ -33,18 +33,13 @@
 
   body {
     font-family:'Poppins',sans-serif;
-    background:var(--surface);
-    margin:0; padding:0;
-    min-height:100vh;
-    overflow:hidden;
+    background:var(--bg-dark);
+    display:flex; justify-content:center; align-items:center;
+    min-height:100vh; padding:20px;
   }
 
   /* ── SCENE ── */
-  .scene { display:block; width:100%; height:100vh; }
-  @media(min-width:700px){
-    body { display:flex; justify-content:center; align-items:center; background:var(--bg-dark); padding:20px; }
-    .scene { display:flex; gap:40px; align-items:flex-start; max-width:1160px; height:auto; }
-  }
+  .scene { display:flex; gap:40px; align-items:flex-start; max-width:1160px; width:100%; }
 
   /* ── BRAND PANEL ── */
   .brand-panel { flex:1; color:white; padding:20px 0; display:flex; flex-direction:column; gap:24px; }
@@ -78,26 +73,15 @@
   .p-icon { width:20px; height:20px; border-radius:4px; display:flex; align-items:center; justify-content:center; font-size:9px; font-weight:800; flex-shrink:0; }
 
   /* ── PHONE ── */
-  .phone-wrap { position:relative; flex-shrink:0; width:100%; height:100vh; }
-  @media(min-width:700px){ .phone-wrap { width:auto; height:auto; } }
+  .phone-wrap { position:relative; flex-shrink:0; }
   .phone {
-    width:100vw; height:100vh;
+    width:375px; height:812px;
     background:var(--surface);
-    border-radius:0; border:none;
+    border-radius:46px; border:8px solid #2D3748;
     overflow:hidden; position:relative;
-    box-shadow:none;
+    box-shadow: 0 0 0 1px rgba(255,255,255,0.05), 0 40px 80px rgba(0,0,0,0.7), 0 0 80px rgba(255,84,23,0.1);
   }
-  @media(min-width:700px){
-    .phone {
-      width:375px; height:812px;
-      border-radius:46px; border:8px solid #2D3748;
-      box-shadow: 0 0 0 1px rgba(255,255,255,0.05), 0 40px 80px rgba(0,0,0,0.7), 0 0 80px rgba(255,84,23,0.1);
-    }
-  }
-  .phone::before { display:none; }
-  @media(min-width:700px){
-    .phone::before { display:block; content:''; position:absolute; top:0; left:50%; transform:translateX(-50%); width:120px; height:32px; background:#2D3748; border-radius:0 0 22px 22px; z-index:100; }
-  }
+  .phone::before { content:''; position:absolute; top:0; left:50%; transform:translateX(-50%); width:120px; height:32px; background:#2D3748; border-radius:0 0 22px 22px; z-index:100; }
 
   .screen { position:absolute; inset:0; overflow:hidden; opacity:0; pointer-events:none; transition:opacity 0.3s ease; }
   .screen.active { opacity:1; pointer-events:all; }
@@ -327,14 +311,11 @@
   .toast.show { transform:translateX(-50%) translateY(0); }
 
   /* ── NAV DOTS ── */
-  .nav-dots { display:none; }
-  @media(min-width:700px){
-    .nav-dots { display:flex; flex-direction:column; gap:7px; position:absolute; right:-26px; top:50%; transform:translateY(-50%); }
-  }
+  .nav-dots { display:flex; flex-direction:column; gap:7px; position:absolute; right:-26px; top:50%; transform:translateY(-50%); }
   .nav-dot { width:7px; height:7px; border-radius:50%; background:rgba(255,255,255,0.2); cursor:pointer; transition:all 0.2s; }
   .nav-dot.active { background:var(--orange-800); transform:scale(1.35); }
-  .brand-panel { display:none; }
-  @media(min-width:700px){ .brand-panel { display:flex; } .scene { justify-content:center; } }
+
+  @media(max-width:800px){.brand-panel{display:none;}.scene{justify-content:center;}}
 </style>
 </head>
 <body>
@@ -406,7 +387,7 @@
       <!-- ═══════ HOME ═══════ -->
       <div class="screen active" id="home">
         <div class="status-bar" style="background:var(--surface);">
-          <span class="st-time" id="st-time-{i}">9:41</span>
+          <span class="st-time">9:41</span>
           <div class="st-icons"><span>●●●</span><span>🔋</span></div>
         </div>
         <div class="app-header">
@@ -435,6 +416,24 @@
             <div class="gchip" style="background:rgba(255,255,255,0.05);color:var(--grey-600);border:1px solid rgba(255,255,255,0.07);">👨‍👩‍👧 Family</div>
             <div class="gchip" style="background:rgba(255,255,255,0.05);color:var(--grey-600);border:1px solid rgba(255,255,255,0.07);">💼 Work</div>
             <div class="gchip" style="background:rgba(255,255,255,0.05);color:var(--grey-600);border:1px solid rgba(255,255,255,0.07);">🤝 Stokvel</div>
+          </div>
+          <div class="sec-title" style="margin-top:4px;">Explore GroupPay modes</div>
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:8px 0 14px 0;">
+            <div onclick="showScreen('corporate')" style="background:linear-gradient(135deg,#FF5417 0%,#C2410C 100%);border-radius:14px;padding:12px 8px;text-align:center;cursor:pointer;box-shadow:0 4px 14px rgba(255,84,23,0.3);">
+              <div style="font-size:22px;margin-bottom:2px;">💼</div>
+              <div style="font-family:'Poppins',sans-serif;font-size:11px;font-weight:700;color:white;">Corporate</div>
+              <div style="font-size:8px;color:rgba(255,255,255,0.75);margin-top:1px;">Expense claims</div>
+            </div>
+            <div onclick="showScreen('stokvel')" style="background:linear-gradient(135deg,#001752 0%,#0F328C 100%);border-radius:14px;padding:12px 8px;text-align:center;cursor:pointer;box-shadow:0 4px 14px rgba(15,50,140,0.35);">
+              <div style="font-size:22px;margin-bottom:2px;">🤝</div>
+              <div style="font-family:'Poppins',sans-serif;font-size:11px;font-weight:700;color:white;">Stokvel</div>
+              <div style="font-size:8px;color:rgba(255,255,255,0.75);margin-top:1px;">R50bn market</div>
+            </div>
+            <div onclick="showScreen('group-detail')" style="background:linear-gradient(135deg,#0D9488 0%,#0F766E 100%);border-radius:14px;padding:12px 8px;text-align:center;cursor:pointer;box-shadow:0 4px 14px rgba(13,148,136,0.3);">
+              <div style="font-size:22px;margin-bottom:2px;">👨‍👩‍👧</div>
+              <div style="font-family:'Poppins',sans-serif;font-size:11px;font-weight:700;color:white;">Family</div>
+              <div style="font-size:8px;color:rgba(255,255,255,0.75);margin-top:1px;">Currently active</div>
+            </div>
           </div>
           <div class="sec-title">Active groups <span class="see-all">See all</span></div>
           <div class="group-cards">
@@ -465,9 +464,221 @@
         </div>
       </div>
 
+      
+      <!-- ═══════ CORPORATE MODE ═══════ -->
+      <div class="screen" id="corporate">
+        <div class="status-bar" style="background:var(--surface);">
+          <span class="st-time">9:41</span>
+          <div class="st-icons"><span>●●●</span><span>🔋</span></div>
+        </div>
+        <div class="app-header" style="background:linear-gradient(135deg,#FF5417 0%,#C2410C 100%);">
+          <div onclick="showScreen('home')" style="display:flex;align-items:center;gap:8px;cursor:pointer;">
+            <div style="color:white;font-size:18px;">‹</div>
+            <div><div style="font-family:'Poppins',sans-serif;font-size:15px;font-weight:700;color:white;">Corporate Mode</div>
+            <div style="font-size:9px;color:rgba(255,255,255,0.75);">Multichoice SA · Finance Dept</div></div>
+          </div>
+          <div class="av" style="background:rgba(255,255,255,0.2);color:white;">TM</div>
+        </div>
+        <div class="sc" style="height:calc(100% - 46px - 68px);">
+          <!-- Budget hero -->
+          <div style="background:white;border-radius:14px;padding:14px;margin-bottom:10px;border:1px solid var(--grey-400);">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;">
+              <div>
+                <div style="font-size:10px;color:var(--grey-600);font-weight:500;">Monthly Budget — Sales Team</div>
+                <div style="font-family:'Poppins',sans-serif;font-size:22px;font-weight:700;color:var(--navy);margin-top:2px;">R 42,380 <span style="font-size:12px;color:var(--grey-600);font-weight:500;">/ R 60,000</span></div>
+              </div>
+              <div style="background:rgba(13,148,136,0.15);color:var(--teal);padding:4px 8px;border-radius:8px;font-size:10px;font-weight:600;">On track</div>
+            </div>
+            <div style="height:6px;background:var(--grey-200);border-radius:3px;overflow:hidden;">
+              <div style="width:70%;height:100%;background:linear-gradient(90deg,var(--teal) 0%,#14B8A6 100%);"></div>
+            </div>
+            <div style="display:flex;justify-content:space-between;margin-top:8px;font-size:10px;color:var(--grey-600);">
+              <span>70% used · 11 days left</span><span>R 17,620 remaining</span>
+            </div>
+          </div>
+
+          <!-- Pending approvals -->
+          <div class="sec-title">Pending approvals <span class="see-all" style="color:var(--orange-800);">5</span></div>
+          <div style="background:white;border-radius:12px;padding:2px;border:1px solid var(--grey-400);margin-bottom:10px;">
+            <div style="padding:10px;border-bottom:1px solid var(--grey-200);display:flex;align-items:center;gap:10px;">
+              <div style="width:34px;height:34px;border-radius:50%;background:rgba(255,84,23,0.12);display:flex;align-items:center;justify-content:center;font-size:16px;">📷</div>
+              <div style="flex:1;min-width:0;">
+                <div style="font-weight:600;font-size:12px;color:var(--navy);">Lerato Ngcobo · Client lunch</div>
+                <div style="font-size:10px;color:var(--grey-600);">Ocean Basket V&A · Today 12:34</div>
+              </div>
+              <div style="text-align:right;">
+                <div style="font-family:'Poppins',sans-serif;font-weight:700;color:var(--navy);font-size:13px;">R 687</div>
+                <div style="display:flex;gap:4px;margin-top:4px;"><div style="background:var(--teal);color:white;padding:3px 7px;border-radius:6px;font-size:9px;font-weight:700;">✓</div><div style="background:var(--red);color:white;padding:3px 7px;border-radius:6px;font-size:9px;font-weight:700;">✗</div></div>
+              </div>
+            </div>
+            <div style="padding:10px;border-bottom:1px solid var(--grey-200);display:flex;align-items:center;gap:10px;">
+              <div style="width:34px;height:34px;border-radius:50%;background:rgba(245,158,11,0.12);display:flex;align-items:center;justify-content:center;font-size:16px;">✈️</div>
+              <div style="flex:1;min-width:0;">
+                <div style="font-weight:600;font-size:12px;color:var(--navy);">Sipho Pillay · JHB trip</div>
+                <div style="font-size:10px;color:var(--grey-600);">Flight + hotel · 3 nights</div>
+              </div>
+              <div style="text-align:right;">
+                <div style="font-family:'Poppins',sans-serif;font-weight:700;color:var(--navy);font-size:13px;">R 8,240</div>
+                <div style="display:flex;gap:4px;margin-top:4px;"><div style="background:var(--teal);color:white;padding:3px 7px;border-radius:6px;font-size:9px;font-weight:700;">✓</div><div style="background:var(--red);color:white;padding:3px 7px;border-radius:6px;font-size:9px;font-weight:700;">✗</div></div>
+              </div>
+            </div>
+            <div style="padding:10px;display:flex;align-items:center;gap:10px;">
+              <div style="width:34px;height:34px;border-radius:50%;background:rgba(13,148,136,0.12);display:flex;align-items:center;justify-content:center;font-size:16px;">⛽</div>
+              <div style="flex:1;min-width:0;">
+                <div style="font-weight:600;font-size:12px;color:var(--navy);">Kabelo Botha · Fuel</div>
+                <div style="font-size:10px;color:var(--grey-600);">Shell Claremont · Today</div>
+              </div>
+              <div style="text-align:right;">
+                <div style="font-family:'Poppins',sans-serif;font-weight:700;color:var(--navy);font-size:13px;">R 945</div>
+                <div style="display:flex;gap:4px;margin-top:4px;"><div style="background:var(--teal);color:white;padding:3px 7px;border-radius:6px;font-size:9px;font-weight:700;">✓</div><div style="background:var(--red);color:white;padding:3px 7px;border-radius:6px;font-size:9px;font-weight:700;">✗</div></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Virtual cards -->
+          <div class="sec-title">Team virtual cards</div>
+          <div style="display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;margin-bottom:10px;">
+            <div style="flex:0 0 140px;background:linear-gradient(135deg,var(--navy) 0%,#0F328C 100%);border-radius:12px;padding:11px;color:white;">
+              <div style="font-size:9px;opacity:0.7;">Sales Team</div>
+              <div style="font-family:'Poppins',sans-serif;font-size:14px;font-weight:700;margin-top:6px;">•••• 4827</div>
+              <div style="display:flex;justify-content:space-between;margin-top:8px;font-size:10px;">
+                <span style="opacity:0.7;">Limit</span><span style="font-weight:600;">R 60K</span>
+              </div>
+            </div>
+            <div style="flex:0 0 140px;background:linear-gradient(135deg,#7C3AED 0%,#5B21B6 100%);border-radius:12px;padding:11px;color:white;">
+              <div style="font-size:9px;opacity:0.7;">Engineering</div>
+              <div style="font-family:'Poppins',sans-serif;font-size:14px;font-weight:700;margin-top:6px;">•••• 9148</div>
+              <div style="display:flex;justify-content:space-between;margin-top:8px;font-size:10px;">
+                <span style="opacity:0.7;">Limit</span><span style="font-weight:600;">R 45K</span>
+              </div>
+            </div>
+            <div style="flex:0 0 140px;background:linear-gradient(135deg,var(--teal) 0%,#0F766E 100%);border-radius:12px;padding:11px;color:white;">
+              <div style="font-size:9px;opacity:0.7;">Marketing</div>
+              <div style="font-family:'Poppins',sans-serif;font-size:14px;font-weight:700;margin-top:6px;">•••• 2634</div>
+              <div style="display:flex;justify-content:space-between;margin-top:8px;font-size:10px;">
+                <span style="opacity:0.7;">Limit</span><span style="font-weight:600;">R 30K</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Export row -->
+          <div style="background:var(--surface-2);border-radius:12px;padding:11px;margin-bottom:10px;display:flex;align-items:center;gap:10px;">
+            <div style="font-size:22px;">📤</div>
+            <div style="flex:1;">
+              <div style="font-weight:600;font-size:12px;color:white;">Ready to export</div>
+              <div style="font-size:10px;color:var(--grey-600);">April claims · 47 items · R 42,380</div>
+            </div>
+            <div style="background:var(--orange-800);color:white;padding:6px 12px;border-radius:8px;font-size:10px;font-weight:700;">Xero →</div>
+          </div>
+
+          <div style="height:12px;"></div>
+        </div>
+        <div class="bottom-nav">
+          <div class="nav-item" onclick="showScreen('home')"><div class="ni">🏠</div><div class="nl">Home</div></div>
+          <div class="nav-item active"><div class="ni">💼</div><div class="nl">Corporate</div></div>
+          <div class="nav-item" onclick="showScreen('stokvel')"><div class="ni">🤝</div><div class="nl">Stokvel</div></div>
+          <div class="nav-item" onclick="showScreen('notifications')"><div class="ni">🔔</div><div class="nl">Alerts</div></div>
+          <div class="nav-item" onclick="showScreen('dashboard')"><div class="ni">📊</div><div class="nl">Insights</div></div>
+        </div>
+      </div>
+
+      <!-- ═══════ STOKVEL MODE ═══════ -->
+      <div class="screen" id="stokvel">
+        <div class="status-bar" style="background:var(--surface);">
+          <span class="st-time">9:41</span>
+          <div class="st-icons"><span>●●●</span><span>🔋</span></div>
+        </div>
+        <div class="app-header" style="background:linear-gradient(135deg,#001752 0%,#0F328C 100%);">
+          <div onclick="showScreen('home')" style="display:flex;align-items:center;gap:8px;cursor:pointer;">
+            <div style="color:white;font-size:18px;">‹</div>
+            <div><div style="font-family:'Poppins',sans-serif;font-size:15px;font-weight:700;color:white;">Ubuntu Grocery Stokvel</div>
+            <div style="font-size:9px;color:rgba(255,255,255,0.75);">12 members · Since 2021 · You are Secretary</div></div>
+          </div>
+          <div class="av" style="background:rgba(255,255,255,0.2);color:white;">TM</div>
+        </div>
+        <div class="sc" style="height:calc(100% - 46px - 68px);">
+          <!-- Pot hero -->
+          <div style="background:linear-gradient(135deg,#FF5417 0%,#C2410C 100%);border-radius:14px;padding:14px;margin-bottom:10px;color:white;position:relative;overflow:hidden;">
+            <div style="position:absolute;right:-30px;top:-30px;width:110px;height:110px;background:rgba(255,255,255,0.08);border-radius:50%;"></div>
+            <div style="font-size:10px;opacity:0.8;font-weight:500;">Festive season pot (Nov-Dec)</div>
+            <div style="font-family:'Poppins',sans-serif;font-size:28px;font-weight:700;margin-top:2px;">R 96,480</div>
+            <div style="font-size:10px;opacity:0.75;margin-top:4px;">12 members × R804/month avg · 10 of 11 paid this month</div>
+            <div style="height:6px;background:rgba(255,255,255,0.2);border-radius:3px;overflow:hidden;margin-top:10px;">
+              <div style="width:82%;height:100%;background:white;"></div>
+            </div>
+            <div style="display:flex;justify-content:space-between;margin-top:6px;font-size:10px;opacity:0.85;">
+              <span>82% toward December goal</span><span>R 21,520 to go</span>
+            </div>
+          </div>
+
+          <!-- Key actions -->
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px;">
+            <div style="background:var(--surface-2);border-radius:12px;padding:10px;text-align:center;">
+              <div style="font-size:20px;margin-bottom:2px;">🛒</div>
+              <div style="font-size:10px;font-weight:600;color:white;">Bulk Buy</div>
+              <div style="font-size:8px;color:var(--grey-600);">Checkers</div>
+            </div>
+            <div style="background:var(--surface-2);border-radius:12px;padding:10px;text-align:center;">
+              <div style="font-size:20px;margin-bottom:2px;">💸</div>
+              <div style="font-size:10px;font-weight:600;color:white;">Request</div>
+              <div style="font-size:8px;color:var(--grey-600);">Contribution</div>
+            </div>
+            <div style="background:var(--surface-2);border-radius:12px;padding:10px;text-align:center;">
+              <div style="font-size:20px;margin-bottom:2px;">📑</div>
+              <div style="font-size:10px;font-weight:600;color:white;">NASASA</div>
+              <div style="font-size:8px;color:var(--grey-600);">Report</div>
+            </div>
+          </div>
+
+          <!-- Checkers bulk buy promo -->
+          <div style="background:linear-gradient(135deg,#16A34A 0%,#0F766E 100%);border-radius:12px;padding:12px;margin-bottom:12px;color:white;display:flex;align-items:center;gap:10px;">
+            <div style="font-size:28px;">🛒</div>
+            <div style="flex:1;">
+              <div style="font-weight:700;font-size:12px;">Checkers bulk deal ready</div>
+              <div style="font-size:10px;opacity:0.9;margin-top:2px;">12% off grocery basket · saves R 11,580</div>
+            </div>
+            <div style="background:white;color:var(--green);padding:5px 10px;border-radius:8px;font-size:10px;font-weight:700;">View →</div>
+          </div>
+
+          <!-- Member contributions -->
+          <div class="sec-title">This month's contributions <span class="see-all" style="color:var(--gold);">1 pending</span></div>
+          <div style="background:white;border-radius:12px;border:1px solid var(--grey-400);margin-bottom:12px;">
+            <div style="padding:10px;border-bottom:1px solid var(--grey-200);display:flex;align-items:center;gap:10px;">
+              <div class="sav" style="background:var(--teal);">NM</div>
+              <div style="flex:1;"><div style="font-weight:600;font-size:12px;color:var(--navy);">Nomsa Mbeki</div><div style="font-size:10px;color:var(--grey-600);">Capitec Pay · 2 days ago</div></div>
+              <div style="text-align:right;"><div style="font-weight:700;color:var(--teal);font-size:12px;">R 804 ✓</div></div>
+            </div>
+            <div style="padding:10px;border-bottom:1px solid var(--grey-200);display:flex;align-items:center;gap:10px;">
+              <div class="sav" style="background:#7C3AED;">LN</div>
+              <div style="flex:1;"><div style="font-weight:600;font-size:12px;color:var(--navy);">Lerato Ngcobo</div><div style="font-size:10px;color:var(--grey-600);">PayShap · 3 days ago</div></div>
+              <div style="text-align:right;"><div style="font-weight:700;color:var(--teal);font-size:12px;">R 804 ✓</div></div>
+            </div>
+            <div style="padding:10px;border-bottom:1px solid var(--grey-200);display:flex;align-items:center;gap:10px;">
+              <div class="sav" style="background:var(--gold);">KB</div>
+              <div style="flex:1;"><div style="font-weight:600;font-size:12px;color:var(--navy);">Kabelo Botha</div><div style="font-size:10px;color:var(--red);">Overdue · 4 days</div></div>
+              <div style="text-align:right;"><div style="background:var(--orange-800);color:white;padding:5px 10px;border-radius:8px;font-size:10px;font-weight:700;">Remind</div></div>
+            </div>
+            <div style="padding:10px;display:flex;align-items:center;gap:10px;">
+              <div class="sav" style="background:var(--red);">SP</div>
+              <div style="flex:1;"><div style="font-weight:600;font-size:12px;color:var(--navy);">Sipho Pillay</div><div style="font-size:10px;color:var(--grey-600);">EFT · 5 days ago</div></div>
+              <div style="text-align:right;"><div style="font-weight:700;color:var(--teal);font-size:12px;">R 804 ✓</div></div>
+            </div>
+          </div>
+
+          <div style="height:12px;"></div>
+        </div>
+        <div class="bottom-nav">
+          <div class="nav-item" onclick="showScreen('home')"><div class="ni">🏠</div><div class="nl">Home</div></div>
+          <div class="nav-item" onclick="showScreen('corporate')"><div class="ni">💼</div><div class="nl">Corporate</div></div>
+          <div class="nav-item active"><div class="ni">🤝</div><div class="nl">Stokvel</div></div>
+          <div class="nav-item" onclick="showScreen('notifications')"><div class="ni">🔔</div><div class="nl">Alerts</div></div>
+          <div class="nav-item" onclick="showScreen('dashboard')"><div class="ni">📊</div><div class="nl">Insights</div></div>
+        </div>
+      </div>
+
       <!-- ═══════ GROUP DETAIL ═══════ -->
       <div class="screen" id="group-detail">
-        <div class="status-bar" style="background:var(--surface);"><span class="st-time" id="st-time-{i}">9:41</span><div class="st-icons"><span>●●●</span><span>🔋</span></div></div>
+        <div class="status-bar" style="background:var(--surface);"><span class="st-time">9:41</span><div class="st-icons"><span>●●●</span><span>🔋</span></div></div>
         <div class="back-header"><div class="back-btn" onclick="showScreen('home')">←</div><div><div class="bh-title">✈️ Cape Town Trip</div><div class="bh-sub">Closed · R 4,250 total</div></div><div style="margin-left:auto;font-size:15px;cursor:pointer;" onclick="showToast('Group settings')">⚙️</div></div>
         <div class="sc" style="height:calc(100% - 46px - 68px);">
           <div class="hero-card" style="background:linear-gradient(135deg,#1E3A5F,var(--surface-2));border:1px solid rgba(255,255,255,0.07);">
@@ -510,7 +721,7 @@
 
       <!-- ═══════ QR SCAN SCREEN ═══════ -->
       <div class="screen" id="qr-scan">
-        <div class="status-bar" style="background:transparent;position:absolute;z-index:20;"><span class="st-time" id="st-time-{i}">9:41</span><div class="st-icons"><span>●●●</span><span>🔋</span></div></div>
+        <div class="status-bar" style="background:transparent;position:absolute;z-index:20;"><span class="st-time">9:41</span><div class="st-icons"><span>●●●</span><span>🔋</span></div></div>
         <div class="qr-viewfinder">
           <div class="qr-overlay"></div>
           <!-- Back btn -->
@@ -588,7 +799,7 @@
 
       <!-- ═══════ PARTNER ORDER ═══════ -->
       <div class="screen" id="partner-order">
-        <div class="status-bar" style="background:var(--surface);"><span class="st-time" id="st-time-{i}">9:41</span><div class="st-icons"><span>●●●</span><span>🔋</span></div></div>
+        <div class="status-bar" style="background:var(--surface);"><span class="st-time">9:41</span><div class="st-icons"><span>●●●</span><span>🔋</span></div></div>
         <div class="back-header"><div class="back-btn" onclick="showScreen('home')">←</div><div><div class="bh-title">Partner Order</div><div class="bh-sub">Cape Town Trip · Order for group</div></div></div>
         <div class="sc" style="height:calc(100% - 46px - 68px);">
           <div class="partner-hero"><div class="p-logo-big">60|60</div><div><div class="ph-name">60|60 by Checkers</div><div class="ph-sub">60-minute delivery · Waterfront area</div></div></div>
@@ -760,7 +971,7 @@
 
       <!-- ═══════ NOTIFICATIONS ═══════ -->
       <div class="screen" id="notifications">
-        <div class="status-bar" style="background:var(--surface);"><span class="st-time" id="st-time-{i}">9:41</span><div class="st-icons"><span>●●●</span><span>🔋</span></div></div>
+        <div class="status-bar" style="background:var(--surface);"><span class="st-time">9:41</span><div class="st-icons"><span>●●●</span><span>🔋</span></div></div>
         <div class="app-header"><div style="flex:1;"><div class="bh-title" style="font-family:'Poppins',sans-serif;font-size:15px;font-weight:600;color:white;">Notifications</div></div><div class="av">TM</div></div>
         <div class="sc" style="height:calc(100% - 46px - 68px);">
           <div class="notif-item urgent" onclick="showScreen('settle')">
@@ -803,7 +1014,7 @@
 
       <!-- ═══════ ADD SPEND ═══════ -->
       <div class="screen" id="add-spend">
-        <div class="status-bar" style="background:var(--surface);"><span class="st-time" id="st-time-{i}">9:41</span><div class="st-icons"><span>●●●</span><span>🔋</span></div></div>
+        <div class="status-bar" style="background:var(--surface);"><span class="st-time">9:41</span><div class="st-icons"><span>●●●</span><span>🔋</span></div></div>
         <div class="back-header"><div class="back-btn" onclick="showScreen('group-detail')">←</div><div><div class="bh-title">Add expense</div><div class="bh-sub">Cape Town Trip</div></div></div>
         <div class="sc" style="height:calc(100% - 46px - 68px);">
           <div class="scan-zone" onclick="simulateScan()">
@@ -838,7 +1049,7 @@
 
       <!-- ═══════ DASHBOARD ═══════ -->
       <div class="screen" id="dashboard">
-        <div class="status-bar" style="background:var(--surface);"><span class="st-time" id="st-time-{i}">9:41</span><div class="st-icons"><span>●●●</span><span>🔋</span></div></div>
+        <div class="status-bar" style="background:var(--surface);"><span class="st-time">9:41</span><div class="st-icons"><span>●●●</span><span>🔋</span></div></div>
         <div class="app-header"><div style="flex:1;"><div class="bh-title" style="font-family:'Poppins',sans-serif;font-size:15px;font-weight:600;color:white;">Spending insights</div><div class="bh-sub">All groups · April 2025</div></div><div class="av">TM</div></div>
         <div class="sc" style="height:calc(100% - 46px - 68px);">
           <div class="period-row">
@@ -883,7 +1094,7 @@
 
       <!-- ═══════ SUCCESS ═══════ -->
       <div class="screen" id="success">
-        <div class="status-bar" style="position:absolute;top:0;left:0;right:0;background:transparent;"><span class="st-time" id="st-time-{i}">9:41</span><div class="st-icons"><span>●●●</span><span>🔋</span></div></div>
+        <div class="status-bar" style="position:absolute;top:0;left:0;right:0;background:transparent;"><span class="st-time">9:41</span><div class="st-icons"><span>●●●</span><span>🔋</span></div></div>
         <div style="height:100%;display:flex;align-items:center;justify-content:center;padding-top:46px;">
           <div class="succ-wrap">
             <div class="succ-anim">✓</div>
@@ -921,34 +1132,7 @@
 </div>
 
 <script>
-  // Update clock
-  function updateTime(){
-    const now = new Date();
-    const h = now.getHours().toString().padStart(2,'0');
-    const m = now.getMinutes().toString().padStart(2,'0');
-    const t = h+':'+m;
-    document.querySelectorAll('.st-time').forEach(el => el.textContent = t);
-  }
-  updateTime();
-  setInterval(updateTime, 30000);
-
-  // On mobile fix scroll heights dynamically
-  function fixHeights(){
-    const isMobile = window.innerWidth < 700;
-    if(!isMobile) return;
-    const vh = window.innerHeight;
-    // status bar ~46px, bottom nav ~68px
-    const scrollH = vh - 46 - 68;
-    document.querySelectorAll('.sc').forEach(el => {
-      if(el.style.height && el.style.height.includes('calc')) {
-        el.style.height = scrollH + 'px';
-      }
-    });
-  }
-  window.addEventListener('resize', fixHeights);
-  window.addEventListener('load', fixHeights);
-
-  const screens = ['home','notifications','group-detail','qr-scan','partner-order','payat-checkout','add-spend','dashboard','success'];
+  const screens = ['home','notifications','group-detail','qr-scan','partner-order','payat-checkout','add-spend','dashboard','success','corporate','stokvel'];
   let isOrderContext = false;
 
   function showScreen(id) {
