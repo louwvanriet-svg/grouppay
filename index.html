@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="GroupPay">
@@ -91,6 +91,17 @@
   }
   .status-bar .sb-time { font-variant-numeric:tabular-nums; }
   .status-bar .sb-icons { display:flex; gap:5px; font-size:11px; opacity:0.9; }
+
+  /* When installed as PWA on notched phones, respect safe areas */
+  @media (max-width: 500px) {
+    .status-bar {
+      display:none;  /* Hide fake status bar — use real one */
+    }
+    .phone-frame {
+      padding-top:env(safe-area-inset-top, 0);
+      padding-bottom:env(safe-area-inset-bottom, 0);
+    }
+  }
 
   /* ── APP HEADER ───────────────────────────────────────────────── */
   .app-header {
@@ -473,23 +484,253 @@
   .text-red { color:#F87171; }
   .text-gold { color:#FCD34D; }
 
-  /* Pay@ checkout (from v4) */
-  .payat-method {
-    display:flex; align-items:center; gap:12px;
-    padding:12px; border-radius:12px;
-    background:var(--surface-2);
-    border:2px solid rgba(255,255,255,0.04);
-    cursor:pointer; margin-bottom:8px;
+  /* ══════════════════════════════════════════════════════════════ */
+  /* ePay CHECKOUT — Option B: Card Expanded design                 */
+  /* ══════════════════════════════════════════════════════════════ */
+  .ch-screen {
+    background:#FFFFFF;
+    color:var(--navy);
+    display:flex; flex-direction:column;
+    min-height:100%;
   }
-  .payat-method.selected {
-    border-color:var(--orange-800);
-    background:rgba(255,84,23,0.08);
+  .ch-hdr {
+    background:linear-gradient(135deg, var(--navy), #0A1E4A);
+    padding:14px 18px;
+    display:flex; align-items:center; justify-content:space-between;
+    flex-shrink:0;
   }
-  .payat-method .pm-logo {
-    width:44px; height:44px; border-radius:10px;
+  .ch-hdr .ch-lo {
+    display:flex; align-items:center; gap:8px;
+  }
+  .ch-hdr .ch-back {
+    width:28px; height:28px; border-radius:50%;
     display:flex; align-items:center; justify-content:center;
-    font-weight:800; font-size:11px; color:white; flex-shrink:0;
+    background:rgba(255,255,255,0.08);
+    color:white; font-size:16px; cursor:pointer; margin-right:6px;
   }
+  .ch-hdr .ch-li {
+    width:28px; height:28px; background:var(--orange-800); border-radius:6px;
+    display:flex; align-items:center; justify-content:center;
+    font-weight:800; font-size:9px; color:white; letter-spacing:-0.3px;
+  }
+  .ch-hdr .ch-lt {
+    font-size:13px; font-weight:600; color:white;
+  }
+  .ch-sec-pill {
+    display:flex; align-items:center; gap:4px;
+    font-size:9px; color:rgba(255,255,255,0.55); font-weight:500;
+    padding:4px 8px; border-radius:100px;
+    background:rgba(255,255,255,0.06);
+    border:1px solid rgba(255,255,255,0.08);
+  }
+
+  .ch-bod {
+    padding:18px;
+    background:#FFFFFF;
+    flex:1;
+    display:flex; flex-direction:column;
+    overflow-y:auto;
+  }
+
+  /* Order bar */
+  .ch-obar {
+    display:flex; justify-content:space-between; align-items:center;
+    padding:12px 14px;
+    background:#F7F8FA;
+    border:1px solid #E8EAEF;
+    border-radius:10px;
+    margin-bottom:16px;
+  }
+  .ch-obar .m {
+    font-size:12px; font-weight:600; color:var(--navy);
+  }
+  .ch-obar .m .sub {
+    display:block; font-size:10px; color:#8A92A5; font-weight:400; margin-top:1px;
+  }
+  .ch-obar .a {
+    font-size:18px; font-weight:800; color:var(--navy); letter-spacing:-0.4px;
+  }
+
+  /* Section title */
+  .ch-st {
+    font-size:10px; font-weight:700;
+    color:#8A92A5; text-transform:uppercase; letter-spacing:0.8px;
+    margin-bottom:8px;
+  }
+
+  /* Method tiles */
+  .ch-meth {
+    display:flex; flex-direction:column; gap:0;
+  }
+  .ch-t {
+    position:relative;
+    display:flex; align-items:center; gap:10px;
+    padding:12px 14px;
+    background:#FFFFFF;
+    border:1.5px solid #E8EAEF;
+    border-radius:10px;
+    cursor:pointer;
+    margin-bottom:6px;
+    transition:all 0.18s ease;
+  }
+  .ch-t:hover { border-color:#C9CFDB; }
+  .ch-t.sel {
+    border-color:var(--orange-800);
+    background:#FFFAF7;
+    box-shadow:0 0 0 2px rgba(255,84,23,0.08);
+  }
+  .ch-t .rd {
+    width:18px; height:18px; border-radius:50%;
+    border:2px solid #C9CFDB;
+    flex-shrink:0;
+    position:relative;
+    transition:all 0.18s ease;
+  }
+  .ch-t.sel .rd {
+    border-color:var(--orange-800);
+  }
+  .ch-t.sel .rd::after {
+    content:''; position:absolute;
+    top:50%; left:50%; transform:translate(-50%,-50%);
+    width:8px; height:8px; border-radius:50%;
+    background:var(--orange-800);
+  }
+  .ch-t .tc {
+    flex:1;
+    display:flex; align-items:center; justify-content:space-between;
+    gap:8px; min-width:0;
+  }
+  .ch-t .tl {
+    font-size:13px; font-weight:600; color:var(--navy);
+  }
+  .ch-t .tl .tlsub {
+    display:block; font-size:10px; color:#8A92A5; font-weight:400; margin-top:1px;
+  }
+  .ch-t .ti {
+    display:flex; align-items:center; gap:4px;
+    flex-shrink:0;
+  }
+  .ch-t .lp {
+    height:24px; padding:3px 5px;
+    background:#FFFFFF;
+    border:1px solid #E8EAEF;
+    border-radius:4px;
+    display:flex; align-items:center; justify-content:center;
+    font-size:8px; font-weight:700; color:var(--navy);
+    letter-spacing:-0.2px;
+  }
+  .ch-t .lp.wide { padding:3px 8px; }
+  .ch-t .pop {
+    position:absolute; top:-8px; right:10px;
+    font-size:8px; font-weight:700; color:white;
+    background:linear-gradient(135deg, var(--orange-800), #E84A10);
+    padding:3px 7px; border-radius:100px;
+    letter-spacing:0.4px;
+    box-shadow:0 2px 6px rgba(255,84,23,0.3);
+  }
+
+  /* Expanded form (Capitec/card inline form) */
+  .ch-cf {
+    overflow:hidden;
+    max-height:0; opacity:0;
+    transition:max-height 0.35s ease, opacity 0.25s ease, padding 0.3s ease, margin 0.3s ease;
+    background:#F7F8FA;
+    border-radius:10px;
+    border:1px solid #E8EAEF;
+    padding:0 14px; margin:0;
+  }
+  .ch-cf.vis {
+    max-height:260px; opacity:1;
+    padding:14px; margin:4px 0 8px;
+  }
+  .ch-cf-row {
+    display:flex; gap:10px; margin-bottom:8px;
+  }
+  .ch-cf-row:last-child { margin-bottom:0; }
+  .ch-cf-field { flex:1; }
+  .ch-cf-field.full { flex:3; }
+  .ch-cf-field label {
+    font-size:9px; font-weight:700; color:#8A92A5;
+    text-transform:uppercase; letter-spacing:0.4px;
+    display:block; margin-bottom:4px;
+  }
+  .ch-cf-field input {
+    width:100%; height:36px;
+    border:1.5px solid #E8EAEF;
+    border-radius:6px;
+    padding:0 10px;
+    font-family:'Poppins',sans-serif; font-size:12px;
+    color:var(--navy); background:white;
+    outline:none;
+    transition:border-color 0.18s ease, box-shadow 0.18s ease;
+  }
+  .ch-cf-field input:focus {
+    border-color:var(--orange-800);
+    box-shadow:0 0 0 3px rgba(255,84,23,0.08);
+  }
+  .ch-cf-field input::placeholder { color:#C9CFDB; }
+  .ch-cf-note {
+    font-size:10px; color:#8A92A5; margin-top:4px;
+    display:flex; align-items:center; gap:4px;
+  }
+
+  /* Pay button */
+  .ch-pbtn {
+    width:100%; height:46px;
+    border:none; border-radius:10px;
+    background:linear-gradient(135deg, var(--orange-800), #E84A10);
+    color:white;
+    font-family:'Poppins',sans-serif; font-size:13px; font-weight:700;
+    text-transform:uppercase; letter-spacing:0.7px;
+    cursor:pointer;
+    display:flex; align-items:center; justify-content:center; gap:8px;
+    margin-top:14px;
+    box-shadow:0 4px 16px rgba(255,84,23,0.25);
+    transition:all 0.18s ease;
+    position:relative; overflow:hidden;
+  }
+  .ch-pbtn:active { transform:translateY(1px); box-shadow:0 2px 8px rgba(255,84,23,0.2); }
+  .ch-pbtn svg { flex-shrink:0; }
+
+  /* Trust strip */
+  .ch-trust {
+    display:flex; align-items:center; justify-content:center;
+    gap:14px; margin-top:12px;
+  }
+  .ch-trust .dti {
+    font-size:9px; color:#8A92A5;
+    display:flex; align-items:center; gap:3px; font-weight:500;
+  }
+  .ch-trust .dti svg { opacity:0.45; }
+
+  /* Footer */
+  .ch-ftr {
+    padding:14px 18px;
+    border-top:1px solid #E8EAEF;
+    text-align:center;
+    background:#F7F8FA;
+  }
+  .ch-ftr span {
+    font-size:9px; color:#8A92A5;
+  }
+  .ch-ftr b { color:var(--navy); font-weight:700; }
+
+  /* Expand "More ways to pay" toggle */
+  .ch-exp-btn {
+    display:flex; align-items:center; justify-content:center; gap:5px;
+    padding:10px; cursor:pointer;
+    font-size:11px; font-weight:500; color:#8A92A5;
+    background:none; border:none; width:100%;
+    font-family:'Poppins',sans-serif;
+  }
+  .ch-exp-btn:hover { color:var(--navy); }
+  .ch-exp-btn svg { transition:transform 0.25s ease; }
+  .ch-exp-btn.open svg { transform:rotate(180deg); }
+  .ch-hm {
+    max-height:0; overflow:hidden; opacity:0;
+    transition:max-height 0.4s ease, opacity 0.3s ease;
+  }
+  .ch-hm.show { max-height:500px; opacity:1; }
 
   /* Audit log */
   .audit-item {
@@ -2258,93 +2499,214 @@
     <!-- ─────────────────────────────────────────────────────────── -->
     <!-- SCREEN 18: PAY@ CHECKOUT (used for contribution & bulk buy) -->
     <!-- ─────────────────────────────────────────────────────────── -->
+    <!-- ─────────────────────────────────────────────────────────── -->
+    <!-- SCREEN 18: ePay CHECKOUT — Option B Card Expanded           -->
+    <!-- ─────────────────────────────────────────────────────────── -->
     <div class="screen" id="screen-payat">
-      <div class="app-header" style="background:var(--orange-800);">
-        <div class="back-btn" onclick="history.back() || show('screen-contributions')">‹</div>
-        <div class="ah-title">
-          <div class="ah-main">pay@ checkout</div>
-          <div class="ah-sub">Secure · FSCA Licensed</div>
-        </div>
-        <div style="width:28px; height:28px; background:white; border-radius:50%; display:flex; align-items:center; justify-content:center; font-family:'Poppins',sans-serif; font-weight:800; color:var(--orange-800); font-size:10px;">p@</div>
-      </div>
-      <div class="screen-body" style="background:var(--navy);">
+      <div class="ch-screen">
 
-        <!-- Amount hero -->
-        <div class="card tinted-orange" style="margin:6px 0 12px; text-align:center; padding:20px;">
-          <div class="p-sm" style="color:var(--orange-400); font-size:10px; letter-spacing:1px;" id="payat-label">NOVEMBER CONTRIBUTION</div>
-          <div style="font-family:'Poppins',sans-serif; font-size:40px; font-weight:800; color:white; margin-top:4px; letter-spacing:-1px;" id="payat-amount">R 800</div>
-          <div class="p-sm" style="margin-top:4px;" id="payat-to">to Ubuntu Grocery Stokvel</div>
-        </div>
-
-        <!-- Payment methods -->
-        <div class="sec-title">Pay with</div>
-
-        <div class="payat-method selected">
-          <div class="pm-logo" style="background:#C8102E;">Capitec Pay</div>
-          <div class="flex-1">
-            <div class="h-md" style="font-size:13px;">Capitec Pay</div>
-            <div class="p-sm">Linked · no fee</div>
+        <!-- Header -->
+        <div class="ch-hdr">
+          <div class="ch-lo">
+            <div class="ch-back" onclick="history.back() || show('screen-contributions')">‹</div>
+            <div class="ch-li">pay@</div>
+            <span class="ch-lt">Checkout</span>
           </div>
-          <div style="color:var(--orange-800); font-size:20px;">●</div>
-        </div>
-
-        <div class="payat-method">
-          <div class="pm-logo" style="background:var(--teal);">PayShap</div>
-          <div class="flex-1">
-            <div class="h-md" style="font-size:13px;">PayShap</div>
-            <div class="p-sm">Instant · all banks · R2 fee</div>
+          <div class="ch-sec-pill">
+            <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            PCI DSS
           </div>
-          <div style="color:var(--grey-500); font-size:20px;">○</div>
         </div>
 
-        <div class="payat-method">
-          <div class="pm-logo" style="background:#009639;">FNB</div>
-          <div class="flex-1">
-            <div class="h-md" style="font-size:13px;">FNB EFT</div>
-            <div class="p-sm">Free · 24h settlement</div>
-          </div>
-          <div style="color:var(--grey-500); font-size:20px;">○</div>
-        </div>
+        <!-- Body -->
+        <div class="ch-bod">
 
-        <div class="payat-method">
-          <div class="pm-logo" style="background:var(--navy-light);">Card</div>
-          <div class="flex-1">
-            <div class="h-md" style="font-size:13px;">Card (Visa/Mastercard)</div>
-            <div class="p-sm">•••• 4829</div>
-          </div>
-          <div style="color:var(--grey-500); font-size:20px;">○</div>
-        </div>
-
-        <div class="payat-method">
-          <div class="pm-logo" style="background:#7C3AED;">1Voucher</div>
-          <div class="flex-1">
-            <div class="h-md" style="font-size:13px;">1Voucher / OTT</div>
-            <div class="p-sm">From kiosk · cash</div>
-          </div>
-          <div style="color:var(--grey-500); font-size:20px;">○</div>
-        </div>
-
-        <div class="spacer-sm"></div>
-        <div class="p-sm text-center" style="font-size:10px;">+ 35 more networks via Pay@</div>
-
-        <div class="spacer-md"></div>
-
-        <!-- Security strip -->
-        <div class="card" style="padding:10px 12px; background:rgba(22,163,74,0.08); border:1px solid rgba(22,163,74,0.3);">
-          <div style="display:flex; align-items:center; gap:10px;">
-            <div style="font-size:16px;">🛡️</div>
-            <div class="flex-1">
-              <div class="p-md" style="font-size:11px; color:#4ADE80;"><strong>Secured by Pay@</strong></div>
-              <div class="p-sm" style="font-size:9px;">FSCA licensed · ISO 27001 · 19 years in SA</div>
+          <!-- Order bar -->
+          <div class="ch-obar">
+            <div class="m">
+              <span id="payat-merchant">Ubuntu Grocery Stokvel</span>
+              <span class="sub" id="payat-label">November contribution</span>
             </div>
+            <div class="a" id="payat-amount">R 800</div>
           </div>
+
+          <div class="ch-st">Pay with</div>
+
+          <div class="ch-meth" data-g="payat">
+
+            <!-- Capitec Pay - pre-selected, expanded -->
+            <div class="ch-t sel" onclick="chPick(this)">
+              <span class="pop">POPULAR</span>
+              <div class="rd"></div>
+              <div class="tc">
+                <div class="tl">
+                  Capitec Pay
+                  <span class="tlsub">Linked to your stokvel · no fee</span>
+                </div>
+                <div class="ti">
+                  <div class="lp" style="background:#C8102E;color:white;border-color:#C8102E;">Capitec</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="ch-cf vis" data-method="Capitec Pay">
+              <div class="ch-cf-row">
+                <div class="ch-cf-field full">
+                  <label>Capitec phone number</label>
+                  <input type="tel" placeholder="082 123 4567" value="082 ●●● 4182" maxlength="13">
+                </div>
+              </div>
+              <div class="ch-cf-note">
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#16A34A" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                You'll approve in your Capitec app. Takes 3 seconds.
+              </div>
+            </div>
+
+            <!-- PayShap -->
+            <div class="ch-t" onclick="chPick(this)">
+              <div class="rd"></div>
+              <div class="tc">
+                <div class="tl">
+                  PayShap
+                  <span class="tlsub">Instant · all SA banks · R 2 fee</span>
+                </div>
+                <div class="ti">
+                  <div class="lp" style="background:#0D9488;color:white;border-color:#0D9488;">PayShap</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- FNB EFT -->
+            <div class="ch-t" onclick="chPick(this)">
+              <div class="rd"></div>
+              <div class="tc">
+                <div class="tl">
+                  FNB EFT
+                  <span class="tlsub">Free · 24h settlement</span>
+                </div>
+                <div class="ti">
+                  <div class="lp" style="background:#009639;color:white;border-color:#009639;">FNB</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Card -->
+            <div class="ch-t" onclick="chPick(this)">
+              <div class="rd"></div>
+              <div class="tc">
+                <div class="tl">
+                  Card
+                  <span class="tlsub">Visa · Mastercard · saved cards</span>
+                </div>
+                <div class="ti">
+                  <div class="lp" style="background:#1565C0;color:white;border-color:#1565C0;">VISA</div>
+                  <div class="lp" style="background:#EB001B;color:white;border-color:#EB001B;">MC</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="ch-cf" data-method="Card">
+              <div class="ch-cf-row">
+                <div class="ch-cf-field full">
+                  <label>Card number</label>
+                  <input type="text" placeholder="1234 5678 9012 3456" maxlength="19">
+                </div>
+              </div>
+              <div class="ch-cf-row">
+                <div class="ch-cf-field">
+                  <label>Expiry</label>
+                  <input type="text" placeholder="MM / YY" maxlength="7">
+                </div>
+                <div class="ch-cf-field">
+                  <label>CVV</label>
+                  <input type="text" placeholder="123" maxlength="4">
+                </div>
+              </div>
+            </div>
+
+            <!-- More ways to pay toggle -->
+            <button class="ch-exp-btn" onclick="chToggleMore(this)">
+              <span>More ways to pay</span>
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+
+            <div class="ch-hm" id="ch-hm-more">
+
+              <!-- 1Voucher -->
+              <div class="ch-t" onclick="chPick(this)">
+                <div class="rd"></div>
+                <div class="tc">
+                  <div class="tl">
+                    1Voucher / OTT
+                    <span class="tlsub">Cash from kiosk · any amount</span>
+                  </div>
+                  <div class="ti">
+                    <div class="lp" style="background:#7C3AED;color:white;border-color:#7C3AED;">1Voucher</div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Pay in Store -->
+              <div class="ch-t" onclick="chPick(this)">
+                <div class="rd"></div>
+                <div class="tc">
+                  <div class="tl">
+                    Pay in Store
+                    <span class="tlsub">At 5,000+ retailers · cash accepted</span>
+                  </div>
+                  <div class="ti">
+                    <div class="lp wide" style="background:var(--navy);color:white;border-color:var(--navy);">Pay@</div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Scan to Pay -->
+              <div class="ch-t" onclick="chPick(this)">
+                <div class="rd"></div>
+                <div class="tc">
+                  <div class="tl">
+                    Scan to Pay
+                    <span class="tlsub">QR code · any banking app</span>
+                  </div>
+                  <div class="ti">
+                    <div class="lp" style="background:#F59E0B;color:white;border-color:#F59E0B;">QR</div>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+
+          </div>
+
+          <!-- Pay button -->
+          <button class="ch-pbtn" onclick="completePayment()">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            <span class="btn-text" id="ch-btn-text">PAY R 800</span>
+          </button>
+
+          <!-- Trust row -->
+          <div class="ch-trust">
+            <span class="dti">
+              <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+              Secure payment
+            </span>
+            <span class="dti">
+              <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+              Instant confirmation
+            </span>
+            <span class="dti">
+              <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="9"/><polyline points="12 8 12 12 15 15"/></svg>
+              Fast settlement
+            </span>
+          </div>
+
         </div>
 
-        <div class="spacer-md"></div>
-        <button class="btn btn-primary btn-full" onclick="completePayment()" style="background:linear-gradient(135deg, var(--orange-800), #C2410C);">Pay <span id="payat-btn-amount">R 800</span> →</button>
-        <div class="spacer-sm"></div>
-        <div class="p-sm text-center" style="font-size:10px;">Powered by pay@ · your money is safe</div>
-        <div class="spacer-lg"></div>
+        <!-- Footer -->
+        <div class="ch-ftr">
+          <span>Powered by <b>Pay@</b> · FSCA licensed · ISO 27001 · 19 years in SA</span>
+        </div>
+
       </div>
     </div>
 
@@ -2670,18 +3032,32 @@ function applyRole(){
 
 function openPayat(ctx){
   State.payatContext = { ...State.payatContext, ...ctx };
+  // Order bar
   document.getElementById('payat-label').textContent = State.payatContext.label;
   document.getElementById('payat-amount').textContent = State.payatContext.amount;
-  document.getElementById('payat-to').textContent = State.payatContext.to;
-  document.getElementById('payat-btn-amount').textContent = State.payatContext.amount;
+  const merch = document.getElementById('payat-merchant');
+  if (merch) merch.textContent = State.payatContext.to || 'Ubuntu Grocery Stokvel';
+  // Update the CTA button text with the new amount (defaults to Capitec Pay since that's pre-selected)
+  const btnText = document.getElementById('ch-btn-text');
+  if (btnText) btnText.textContent = 'APPROVE IN CAPITEC — ' + State.payatContext.amount;
+  // Reset to Capitec as pre-selected
+  const meth = document.querySelector('.ch-meth');
+  if (meth){
+    meth.querySelectorAll('.ch-t').forEach(t => t.classList.remove('sel'));
+    meth.querySelectorAll('.ch-cf').forEach(cf => cf.classList.remove('vis'));
+    const firstTile = meth.querySelector('.ch-t');
+    if (firstTile) firstTile.classList.add('sel');
+    const capCf = meth.querySelector('.ch-cf[data-method="Capitec Pay"]');
+    if (capCf) capCf.classList.add('vis');
+  }
   show('screen-payat');
 }
 
 function payContribution(){
   openPayat({
-    label: 'NOVEMBER CONTRIBUTION',
+    label: 'November contribution',
     amount: 'R 800',
-    to: 'to Ubuntu Grocery Stokvel',
+    to: 'Ubuntu Grocery Stokvel',
     successMsg: 'R 800 contributed to Ubuntu Grocery Stokvel · 11 of 12 paid this month',
     afterSuccess: 'screen-home'
   });
@@ -2689,9 +3065,9 @@ function payContribution(){
 
 function checkoutBulkBuy(){
   openPayat({
-    label: 'CHECKERS BULK BUY',
+    label: 'Checkers bulk buy',
     amount: 'R 74,030',
-    to: 'to Checkers Claremont',
+    to: 'Checkers Claremont',
     successMsg: 'Bulk buy complete · 2-of-3 executive signatures received · delivery scheduled Dec 14',
     afterSuccess: 'screen-home'
   });
@@ -2704,6 +3080,53 @@ function completePayment(){
   document.getElementById('success-msg').textContent = State.payatContext.successMsg;
   document.getElementById('success-ref').textContent = ref;
   show('screen-success');
+}
+
+/* ─────────────────────────────────────────────────────────────────
+   CHECKOUT — method selection & dynamic CTA
+───────────────────────────────────────────────────────────────── */
+
+function chPick(tile){
+  const meth = tile.closest('.ch-meth');
+  if(!meth) return;
+  // Deselect all tiles
+  meth.querySelectorAll('.ch-t').forEach(t => t.classList.remove('sel'));
+  // Hide all expanded forms
+  meth.querySelectorAll('.ch-cf').forEach(cf => cf.classList.remove('vis'));
+  // Select clicked
+  tile.classList.add('sel');
+  // Show linked expanded form (next sibling if it's a .ch-cf matching the method)
+  const label = tile.querySelector('.tl').firstChild.textContent.trim();
+  const linkedCf = meth.querySelector('.ch-cf[data-method="' + label + '"]');
+  if (linkedCf) linkedCf.classList.add('vis');
+  // Dynamic button text
+  const btnText = document.getElementById('ch-btn-text');
+  const amount = document.getElementById('payat-amount')?.textContent || 'R 800';
+  const map = {
+    'Capitec Pay': 'APPROVE IN CAPITEC — ' + amount,
+    'PayShap': 'PAY VIA PAYSHAP — ' + amount,
+    'FNB EFT': 'CONTINUE TO FNB — ' + amount,
+    'Card': 'PAY ' + amount,
+    '1Voucher / OTT': 'ENTER VOUCHER CODE',
+    'Pay in Store': 'GET PAYMENT BARCODE',
+    'Scan to Pay': 'GENERATE QR CODE',
+  };
+  if (btnText) btnText.textContent = map[label] || ('PAY ' + amount);
+}
+
+function chToggleMore(btn){
+  const hm = document.getElementById('ch-hm-more');
+  if(!hm) return;
+  const lbl = btn.querySelector('span');
+  if (hm.classList.contains('show')){
+    hm.classList.remove('show');
+    btn.classList.remove('open');
+    if (lbl) lbl.textContent = 'More ways to pay';
+  } else {
+    hm.classList.add('show');
+    btn.classList.add('open');
+    if (lbl) lbl.textContent = 'Fewer options';
+  }
 }
 
 /* ─────────────────────────────────────────────────────────────────
